@@ -1,7 +1,7 @@
 {
-    "generated_at":  "2026-07-10T12:04:20.9499960Z",
+    "generated_at":  "2026-07-10T12:10:19.9852556Z",
     "privacy":  "public",
-    "notice":  "Sanitized snapshot. Full data is local only.",
+    "notice":  "Public snapshot: FIO allowed. No phones, emails, clients, amounts.",
     "stats":  {
                   "clients":  25,
                   "tasks":  97,
@@ -17,175 +17,904 @@
                         "domain":  "3D",
                         "task_count":  4,
                         "high_priority":  3,
-                        "active":  1
+                        "active":  1,
+                        "tasks":  [
+                                      {
+                                          "id":  "169-01",
+                                          "title":  "Связаться с Павлом Гуркиным",
+                                          "priority":  "Высокий",
+                                          "status":  "К выполнению",
+                                          "assignee":  "Рафаэль"
+                                      },
+                                      {
+                                          "id":  "169-02",
+                                          "title":  "Подготовить сравнение Outline vs 3D Plan",
+                                          "priority":  "Высокий",
+                                          "status":  "Не начато",
+                                          "assignee":  "3D Plan"
+                                      },
+                                      {
+                                          "id":  "169-03",
+                                          "title":  "Описать правила ввода/обновления ассортимента",
+                                          "priority":  "Высокий",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "169-04",
+                                          "title":  "Подготовить КП",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      }
+                                  ]
                     },
                     {
                         "id":  "P-02",
                         "domain":  "3D",
                         "task_count":  2,
                         "high_priority":  0,
-                        "active":  1
+                        "active":  1,
+                        "tasks":  [
+                                      {
+                                          "id":  "BW-01",
+                                          "title":  "Найти контакт на сайте / в открытых источниках",
+                                          "priority":  "Средний",
+                                          "status":  "К выполнению",
+                                          "assignee":  "Рафаэль"
+                                      },
+                                      {
+                                          "id":  "BW-02",
+                                          "title":  "Оценить применимость 3D Plan (двери/мебель)",
+                                          "priority":  "Низкий",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      }
+                                  ]
                     },
                     {
                         "id":  "P-03",
                         "domain":  "3D",
                         "task_count":  6,
                         "high_priority":  4,
-                        "active":  2
+                        "active":  2,
+                        "tasks":  [
+                                      {
+                                          "id":  "B-01",
+                                          "title":  "Связаться с Жанной — статус после КП",
+                                          "priority":  "Высокий",
+                                          "status":  "К выполнению",
+                                          "assignee":  "ASAP"
+                                      },
+                                      {
+                                          "id":  "B-02",
+                                          "title":  "Актуализировать КП (срок истёк)",
+                                          "priority":  "Высокий",
+                                          "status":  "К выполнению",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "B-03",
+                                          "title":  "Проработать сценарий **собственного ассортимента",
+                                          "priority":  "Высокий",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "B-04",
+                                          "title":  "Получить разрешение от Sura Kitchen space",
+                                          "priority":  "Высокий",
+                                          "status":  "Ожидание",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "B-05",
+                                          "title":  "Провести демо и оценочную сессию",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "B-06",
+                                          "title":  "Подготовить договор при положительном решении",
+                                          "priority":  "Низкий",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      }
+                                  ]
                     },
                     {
                         "id":  "P-04",
                         "domain":  "3D",
                         "task_count":  2,
                         "high_priority":  0,
-                        "active":  1
+                        "active":  1,
+                        "tasks":  [
+                                      {
+                                          "id":  "MO-01",
+                                          "title":  "Найти контакт ЛПР",
+                                          "priority":  "Средний",
+                                          "status":  "К выполнению",
+                                          "assignee":  "Рафаэль"
+                                      },
+                                      {
+                                          "id":  "MO-02",
+                                          "title":  "Учесть специфику рынка РБ (BYN)",
+                                          "priority":  "Низкий",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      }
+                                  ]
                     },
                     {
                         "id":  "P-05",
                         "domain":  "3D",
                         "task_count":  2,
                         "high_priority":  0,
-                        "active":  1
+                        "active":  1,
+                        "tasks":  [
+                                      {
+                                          "id":  "SO-01",
+                                          "title":  "Оценить релевантность продукта для ниши",
+                                          "priority":  "Низкий",
+                                          "status":  "К выполнению",
+                                          "assignee":  "Рафаэль"
+                                      },
+                                      {
+                                          "id":  "SO-02",
+                                          "title":  "Найти прямой контакт ЛПР",
+                                          "priority":  "Низкий",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      }
+                                  ]
                     },
                     {
                         "id":  "P-06",
                         "domain":  "3D",
                         "task_count":  2,
                         "high_priority":  0,
-                        "active":  1
+                        "active":  1,
+                        "tasks":  [
+                                      {
+                                          "id":  "SL-01",
+                                          "title":  "Определить целевое подразделение (мебель / 3D)",
+                                          "priority":  "Средний",
+                                          "status":  "К выполнению",
+                                          "assignee":  "Рафаэль"
+                                      },
+                                      {
+                                          "id":  "SL-02",
+                                          "title":  "Подготовить питч под масштаб Sima-land",
+                                          "priority":  "Низкий",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      }
+                                  ]
                     },
                     {
                         "id":  "P-07",
                         "domain":  "3D",
                         "task_count":  1,
                         "high_priority":  0,
-                        "active":  1
+                        "active":  1,
+                        "tasks":  [
+                                      {
+                                          "id":  "SP-01",
+                                          "title":  "Найти контакт ЛПР",
+                                          "priority":  "Средний",
+                                          "status":  "К выполнению",
+                                          "assignee":  "Рафаэль"
+                                      }
+                                  ]
                     },
                     {
                         "id":  "P-08",
                         "domain":  "3D",
                         "task_count":  3,
                         "high_priority":  1,
-                        "active":  1
+                        "active":  1,
+                        "tasks":  [
+                                      {
+                                          "id":  "SV-01",
+                                          "title":  "Отыскать контакты ЛПР",
+                                          "priority":  "Высокий",
+                                          "status":  "К выполнению",
+                                          "assignee":  "Рафаэль"
+                                      },
+                                      {
+                                          "id":  "SV-02",
+                                          "title":  "Уточнить у Нонтона историю оплаты",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "SV-03",
+                                          "title":  "Оценить объём заведённого каталога",
+                                          "priority":  "Низкий",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      }
+                                  ]
                     },
                     {
                         "id":  "P-09",
                         "domain":  "3D",
                         "task_count":  8,
                         "high_priority":  3,
-                        "active":  0
+                        "active":  0,
+                        "tasks":  [
+                                      {
+                                          "id":  "A-01",
+                                          "title":  "Определить выбранный сценарий (Екитчен / 3CAD / гибрид)",
+                                          "priority":  "Высокий",
+                                          "status":  "Ожидание решения",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "A-02",
+                                          "title":  "Собрать количественные данные для ROI",
+                                          "priority":  "Высокий",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "A-03",
+                                          "title":  "Запросить аудит рендер-фермы у поставщика Екитчен",
+                                          "priority":  "Высокий",
+                                          "status":  "Рекомендовано",
+                                          "assignee":  "Этап 1"
+                                      },
+                                      {
+                                          "id":  "A-04",
+                                          "title":  "Формализовать методологию ввода товаров в каталог",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "A-05",
+                                          "title":  "Назначить дублёров для каталога (Евгений, Елизавета)",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "A-06",
+                                          "title":  "Запустить пилот 3CAD в 1 салоне (если выбран сценарий B)",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  "2–3 мес."
+                                      },
+                                      {
+                                          "id":  "A-07",
+                                          "title":  "Зафиксировать KPI: время сессии, конверсия, время КП",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "A-08",
+                                          "title":  "Оценить позиционирование 3D Plan как альтернативы",
+                                          "priority":  "Низкий",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      }
+                                  ]
                     },
                     {
                         "id":  "P-10",
                         "domain":  "3D",
                         "task_count":  3,
                         "high_priority":  0,
-                        "active":  1
+                        "active":  1,
+                        "tasks":  [
+                                      {
+                                          "id":  "G-01",
+                                          "title":  "Связаться с Ибрагимом / Евгенией — статус",
+                                          "priority":  "Средний",
+                                          "status":  "К выполнению",
+                                          "assignee":  "Рафаэль"
+                                      },
+                                      {
+                                          "id":  "G-02",
+                                          "title":  "Проверить актуальность подписки 15K",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "G-03",
+                                          "title":  "Предложить апгрейд / расширение",
+                                          "priority":  "Низкий",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      }
+                                  ]
                     },
                     {
                         "id":  "P-11",
                         "domain":  "3D",
                         "task_count":  4,
                         "high_priority":  2,
-                        "active":  1
+                        "active":  1,
+                        "tasks":  [
+                                      {
+                                          "id":  "DK-01",
+                                          "title":  "Возобновить контакт в Telegram @da_kyhni",
+                                          "priority":  "Высокий",
+                                          "status":  "К выполнению",
+                                          "assignee":  "Рафаэль"
+                                      },
+                                      {
+                                          "id":  "DK-02",
+                                          "title":  "Подготовить и отправить КП",
+                                          "priority":  "Высокий",
+                                          "status":  "Не начато",
+                                          "assignee":  "3D Plan"
+                                      },
+                                      {
+                                          "id":  "DK-03",
+                                          "title":  "Уточнить объём каталога Вивата",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "DK-04",
+                                          "title":  "Предложить демо",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      }
+                                  ]
                     },
                     {
                         "id":  "P-12",
                         "domain":  "3D",
                         "task_count":  3,
                         "high_priority":  0,
-                        "active":  1
+                        "active":  1,
+                        "tasks":  [
+                                      {
+                                          "id":  "I-01",
+                                          "title":  "Найти контакт ЛПР",
+                                          "priority":  "Средний",
+                                          "status":  "К выполнению",
+                                          "assignee":  "Рафаэль"
+                                      },
+                                      {
+                                          "id":  "I-02",
+                                          "title":  "Проверить статус подписки",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "I-03",
+                                          "title":  "Предложить расширение функционала",
+                                          "priority":  "Низкий",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      }
+                                  ]
                     },
                     {
                         "id":  "P-13",
                         "domain":  "3D",
                         "task_count":  3,
                         "high_priority":  0,
-                        "active":  1
+                        "active":  1,
+                        "tasks":  [
+                                      {
+                                          "id":  "IC-01",
+                                          "title":  "Оценить целесообразность реактивации",
+                                          "priority":  "Средний",
+                                          "status":  "К выполнению",
+                                          "assignee":  "Рафаэль"
+                                      },
+                                      {
+                                          "id":  "IC-02",
+                                          "title":  "Найти контакт ЛПР",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "IC-03",
+                                          "title":  "Предложить модель без лишних затрат на каталог",
+                                          "priority":  "Низкий",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      }
+                                  ]
                     },
                     {
                         "id":  "P-14",
                         "domain":  "3D",
                         "task_count":  4,
                         "high_priority":  2,
-                        "active":  1
+                        "active":  1,
+                        "tasks":  [
+                                      {
+                                          "id":  "K-01",
+                                          "title":  "Связаться с Олегом Ивановичем",
+                                          "priority":  "Высокий",
+                                          "status":  "К выполнению",
+                                          "assignee":  "Рафаэль"
+                                      },
+                                      {
+                                          "id":  "K-02",
+                                          "title":  "Согласовать со Сурой переход на собственное 3D",
+                                          "priority":  "Высокий",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "K-03",
+                                          "title":  "Оценить миграцию с фрейма sura.kameol.ru",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "K-04",
+                                          "title":  "Подготовить КП на собственное решение",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      }
+                                  ]
                     },
                     {
                         "id":  "P-15",
                         "domain":  "3D",
                         "task_count":  6,
                         "high_priority":  3,
-                        "active":  3
+                        "active":  3,
+                        "tasks":  [
+                                      {
+                                          "id":  "L-01",
+                                          "title":  "Связаться с ЛПР (Подколзина / Татьков) — статус",
+                                          "priority":  "Высокий",
+                                          "status":  "К выполнению",
+                                          "assignee":  "ASAP"
+                                      },
+                                      {
+                                          "id":  "L-02",
+                                          "title":  "Актуализировать КП от 16.02.2026",
+                                          "priority":  "Высокий",
+                                          "status":  "К выполнению",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "L-03",
+                                          "title":  "Проработать сценарий: SURA + отдельное решение",
+                                          "priority":  "Высокий",
+                                          "status":  "В работе",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "L-04",
+                                          "title":  "Организовать демо / тестовый период",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "L-05",
+                                          "title":  "Оценить объём миграции каталога",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "L-06",
+                                          "title":  "Согласовать финальное сравнение с клиентом",
+                                          "priority":  "Низкий",
+                                          "status":  "Готово",
+                                          "assignee":  null
+                                      }
+                                  ]
                     },
                     {
                         "id":  "P-16",
                         "domain":  "3D",
                         "task_count":  3,
                         "high_priority":  0,
-                        "active":  1
+                        "active":  1,
+                        "tasks":  [
+                                      {
+                                          "id":  "MK-01",
+                                          "title":  "Найти контакт ЛПР",
+                                          "priority":  "Средний",
+                                          "status":  "К выполнению",
+                                          "assignee":  "Рафаэль"
+                                      },
+                                      {
+                                          "id":  "MK-02",
+                                          "title":  "Уточнить какое ПО используют сейчас",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "MK-03",
+                                          "title":  "Оценить целесообразность повторного контакта",
+                                          "priority":  "Низкий",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      }
+                                  ]
                     },
                     {
                         "id":  "P-17",
                         "domain":  "3D",
                         "task_count":  2,
                         "high_priority":  0,
-                        "active":  1
+                        "active":  1,
+                        "tasks":  [
+                                      {
+                                          "id":  "ME-01",
+                                          "title":  "Найти контакт ЛПР",
+                                          "priority":  "Средний",
+                                          "status":  "К выполнению",
+                                          "assignee":  "Рафаэль"
+                                      },
+                                      {
+                                          "id":  "ME-02",
+                                          "title":  "Уточнить у Нонтона детали проекта",
+                                          "priority":  "Низкий",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      }
+                                  ]
                     },
                     {
                         "id":  "P-18",
                         "domain":  "3D",
                         "task_count":  5,
                         "high_priority":  3,
-                        "active":  2
+                        "active":  2,
+                        "tasks":  [
+                                      {
+                                          "id":  "N-01",
+                                          "title":  "Согласовать с Андреем план доп. встреч",
+                                          "priority":  "Высокий",
+                                          "status":  "К выполнению",
+                                          "assignee":  "Андрей"
+                                      },
+                                      {
+                                          "id":  "N-02",
+                                          "title":  "Получить актуальные контакты через Петра Ардеева",
+                                          "priority":  "Высокий",
+                                          "status":  "К выполнению",
+                                          "assignee":  "Рафаэль"
+                                      },
+                                      {
+                                          "id":  "N-03",
+                                          "title":  "Подготовить предложение: 3D + маркетплейсы",
+                                          "priority":  "Высокий",
+                                          "status":  "Не начато",
+                                          "assignee":  "3D Plan"
+                                      },
+                                      {
+                                          "id":  "N-04",
+                                          "title":  "Связаться с Дмитрием Мухаметовым (ИТ)",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "N-05",
+                                          "title":  "Подготовить КП с учётом подписки ~15K/мес",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      }
+                                  ]
                     },
                     {
                         "id":  "P-19",
                         "domain":  "3D",
                         "task_count":  4,
                         "high_priority":  3,
-                        "active":  1
+                        "active":  1,
+                        "tasks":  [
+                                      {
+                                          "id":  "P-01",
+                                          "title":  "Возобновить контакт с Алексеем Иванченко",
+                                          "priority":  "Высокий",
+                                          "status":  "К выполнению",
+                                          "assignee":  "Рафаэль"
+                                      },
+                                      {
+                                          "id":  "P-02",
+                                          "title":  "Разобрать причины срыва подписки",
+                                          "priority":  "Высокий",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "P-03",
+                                          "title":  "Предложить корректное внедрение конструктора на сайт",
+                                          "priority":  "Высокий",
+                                          "status":  "Не начато",
+                                          "assignee":  "3D Plan"
+                                      },
+                                      {
+                                          "id":  "P-04",
+                                          "title":  "Оценить доработки модуля 1С",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      }
+                                  ]
                     },
                     {
                         "id":  "P-20",
                         "domain":  "3D",
                         "task_count":  6,
                         "high_priority":  3,
-                        "active":  2
+                        "active":  2,
+                        "tasks":  [
+                                      {
+                                          "id":  "R-01",
+                                          "title":  "Связаться с Константином — статус после КП",
+                                          "priority":  "Высокий",
+                                          "status":  "К выполнению",
+                                          "assignee":  "ASAP"
+                                      },
+                                      {
+                                          "id":  "R-02",
+                                          "title":  "Актуализировать КП (срок истёк)",
+                                          "priority":  "Высокий",
+                                          "status":  "К выполнению",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "R-03",
+                                          "title":  "Получить разрешение от Sura Kitchen space",
+                                          "priority":  "Высокий",
+                                          "status":  "Ожидание",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "R-04",
+                                          "title":  "Согласовать оплату RUB / BYN",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "R-05",
+                                          "title":  "Проработать предложение по собственному 3D",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "R-06",
+                                          "title":  "Подготовить договор",
+                                          "priority":  "Низкий",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      }
+                                  ]
                     },
                     {
                         "id":  "P-21",
                         "domain":  "3D",
                         "task_count":  2,
                         "high_priority":  0,
-                        "active":  1
+                        "active":  1,
+                        "tasks":  [
+                                      {
+                                          "id":  "SNT-01",
+                                          "title":  "Найти контакт ЛПР",
+                                          "priority":  "Средний",
+                                          "status":  "К выполнению",
+                                          "assignee":  "Рафаэль"
+                                      },
+                                      {
+                                          "id":  "SNT-02",
+                                          "title":  "Проверить статус подписки",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      }
+                                  ]
                     },
                     {
                         "id":  "P-22",
                         "domain":  "3D",
                         "task_count":  4,
                         "high_priority":  1,
-                        "active":  1
+                        "active":  1,
+                        "tasks":  [
+                                      {
+                                          "id":  "SM-01",
+                                          "title":  "Уточнить причину ухода (через Марину / Анастасию)",
+                                          "priority":  "Высокий",
+                                          "status":  "К выполнению",
+                                          "assignee":  "Рафаэль"
+                                      },
+                                      {
+                                          "id":  "SM-02",
+                                          "title":  "Связаться с Александром",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "SM-03",
+                                          "title":  "Не звонить Максиму** (перешёл в Суру)",
+                                          "priority":  "—",
+                                          "status":  "Зафиксировано",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "SM-04",
+                                          "title":  "Подготовить предложение на возврат",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      }
+                                  ]
                     },
                     {
                         "id":  "P-23",
                         "domain":  "3D",
                         "task_count":  7,
                         "high_priority":  4,
-                        "active":  2
+                        "active":  2,
+                        "tasks":  [
+                                      {
+                                          "id":  "S-01",
+                                          "title":  "Уточнить статус продления у Павла Валерьевича",
+                                          "priority":  "Высокий",
+                                          "status":  "К выполнению",
+                                          "assignee":  "ASAP"
+                                      },
+                                      {
+                                          "id":  "S-02",
+                                          "title":  "Актуализировать КП (срок истёк)",
+                                          "priority":  "Высокий",
+                                          "status":  "К выполнению",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "S-03",
+                                          "title":  "Подписать доп. соглашение к действующему договору",
+                                          "priority":  "Высокий",
+                                          "status":  "Ожидание клиента",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "S-04",
+                                          "title":  "Получить 100% предоплату",
+                                          "priority":  "Высокий",
+                                          "status":  "Ожидание",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "S-05",
+                                          "title":  "Актуализация лицензий (1 день)",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  "После оплаты"
+                                      },
+                                      {
+                                          "id":  "S-06",
+                                          "title":  "Проверка API-обменов по 6 фреймам",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  "После оплаты"
+                                      },
+                                      {
+                                          "id":  "S-07",
+                                          "title":  "Уточнить необходимость брендирования на всех 6 фреймах",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      }
+                                  ]
                     },
                     {
                         "id":  "P-24",
                         "domain":  "3D",
                         "task_count":  4,
                         "high_priority":  2,
-                        "active":  1
+                        "active":  1,
+                        "tasks":  [
+                                      {
+                                          "id":  "F-01",
+                                          "title":  "Найти контакт ЛПР",
+                                          "priority":  "Высокий",
+                                          "status":  "К выполнению",
+                                          "assignee":  "Рафаэль"
+                                      },
+                                      {
+                                          "id":  "F-02",
+                                          "title":  "Разобрать причины срыва подписки",
+                                          "priority":  "Высокий",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "F-03",
+                                          "title":  "Связаться с Грачевым Михаилом за контекстом",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "F-04",
+                                          "title":  "Предложить доработанный план внедрения",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      }
+                                  ]
                     },
                     {
                         "id":  "P-25",
                         "domain":  "3D",
                         "task_count":  7,
                         "high_priority":  3,
-                        "active":  0
+                        "active":  0,
+                        "tasks":  [
+                                      {
+                                          "id":  "YL-01",
+                                          "title":  "Напомнить о себе в Telegram",
+                                          "priority":  "Критический",
+                                          "status":  "Запланировано",
+                                          "assignee":  "13.07.2026"
+                                      },
+                                      {
+                                          "id":  "YL-02",
+                                          "title":  "Назначить и провести демо 3D (дверное демо)",
+                                          "priority":  "Высокий",
+                                          "status":  "Ожидание",
+                                          "assignee":  "После 13.07"
+                                      },
+                                      {
+                                          "id":  "YL-03",
+                                          "title":  "Презентовать модель мотивации (варианты A/B/C)",
+                                          "priority":  "Высокий",
+                                          "status":  "Подготовить",
+                                          "assignee":  "На встрече"
+                                      },
+                                      {
+                                          "id":  "YL-04",
+                                          "title":  "Подготовить короткий питч «3D для отдела продаж дверей»",
+                                          "priority":  "Высокий",
+                                          "status":  "Не начато",
+                                          "assignee":  "До встречи"
+                                      },
+                                      {
+                                          "id":  "YL-05",
+                                          "title":  "Список дверных компаний из её портфеля (после доверия)",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  "После демо"
+                                      },
+                                      {
+                                          "id":  "YL-06",
+                                          "title":  "Оформить партнёрское соглашение / реферальные правила",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  "После согласия"
+                                      },
+                                      {
+                                          "id":  "YL-07",
+                                          "title":  "Пилот у первой дверной компании через интро Юлии",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  "TBD"
+                                      }
+                                  ]
                     }
                 ],
     "events":  [
@@ -193,42 +922,43 @@
                        "date":  "13.07.2026",
                        "time":  null,
                        "type":  "Напоминание",
+                       "title":  "Написать в Telegram: демо 3D для дверей + партнёрство",
                        "status":  "🔔 Запланировано"
-                   },
-                   {
-                       "date":  "ГГГГ-ММ-ДД",
-                       "time":  null,
-                       "type":  "Встреча / Звонок / Дедлайн",
-                       "status":  "Запланировано"
                    },
                    {
                        "date":  "16.02.2026",
                        "type":  "deadline",
+                       "title":  "Выдача КП CP-2026-0216-SM",
                        "status":  "Выполнено"
                    },
                    {
                        "date":  "16.02.2026",
                        "type":  "deadline",
+                       "title":  "Выдача КП CP-2026-0216-RB",
                        "status":  "Выполнено"
                    },
                    {
                        "date":  "18.02.2026",
                        "type":  "deadline",
+                       "title":  "Выдача КП CP-2026-0218-BOXX",
                        "status":  "Выполнено"
                    },
                    {
                        "date":  "~18.03.2026",
                        "type":  "deadline",
+                       "title":  "Истечение срока КП (30 дней)",
                        "status":  "Просрочено"
                    },
                    {
                        "date":  "~31.03.2026",
                        "type":  "deadline",
+                       "title":  "Истечение срока КП («до марта 2026»)",
                        "status":  "Просрочено"
                    },
                    {
                        "date":  "06.07.2026",
                        "type":  "deadline",
+                       "title":  "Запрос встречи (Telegram)",
                        "status":  "Выполнено"
                    }
                ]
