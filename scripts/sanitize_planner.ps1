@@ -45,7 +45,8 @@ foreach ($c in ($Data.clients | Sort-Object { $_.name })) {
     [void]$publicClients.Add([ordered]@{
         name = $c.name
         domain = $c.domain
-        status = $c.status
+        project_status = $c.project_status
+        deal_stage = $c.deal_stage
         contacts = (Sanitize-Contacts $c.contacts)
         tasks = $publicTasks
     })

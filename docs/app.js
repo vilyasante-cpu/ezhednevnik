@@ -102,7 +102,9 @@ function normalizeData(raw) {
     name: c.name || c.id,
     tasks: c.tasks || [],
     contacts: c.contacts || {},
-    status: c.status || null,
+    project_status: c.project_status || c.status || null,
+    deal_stage: c.deal_stage || null,
+    status: c.project_status || c.status || null,
     path: c.path || '',
     highCount: (c.tasks || []).filter((t) => /высок/i.test(t.priority)).length,
     activeCount: (c.tasks || []).filter((t) => /выполнению|в работе/i.test(t.status)).length,
@@ -118,6 +120,29 @@ function allTasks(data) {
       ...t, clientName: c.name || c.id, domain: c.domain, clientPath: c.path || '',
     }))
   );
+}
+
+const PROJECT_STATUS_ORDER = [
+  'Сотрудничаем',
+  'Переговоры',
+  'Коммерческое предложение',
+  'Пауза',
+  'Отказ',
+  'Без статуса',
+];
+
+function projectStatus(client) {
+  return client.project_status || client.status || 'Без статуса';
+}
+
+function statusBadgeClass(status) {
+  const s = (status || '').toLowerCase();
+  if (s.includes('сотруднич')) return 'badge--sage';
+  if (s.includes('переговор')) return 'badge--lavender';
+  if (s.includes('коммерч') || s.includes('кп')) return 'badge--sky';
+  if (s.includes('пауз')) return 'badge--mid';
+  if (s.includes('отказ')) return 'badge--overdue';
+  return 'badge--event';
 }
 
 function priorityClass(p) {
@@ -442,48 +467,72 @@ function renderProjects(data) {
   const f = state.projectFilter;
 
   let clients = [...data.clients];
+  clients = filterBySearch(clients, q, ['name', 'project_status', (c) => c.tasks.map((t) => t.title).join(' ')]);
 
-  if (f === 'high') clients = clients.filter((c) => c.highCount > 0);
-  if (f === 'active') clients = clients.filter((c) => c.activeCount > 0);
-  if (f === 'many') clients = clients.filter((c) => c.tasks.length >= 4);
+  if (f !== 'all') {
+    clients = clients.filter((c) => projectStatus(c) === f);
+  }
 
-  clients = filterBySearch(clients, q, ['name', (c) => c.tasks.map((t) => t.title).join(' ')]);
-
-  clients.sort((a, b) => b.highCount - a.highCount || b.tasks.length - a.tasks.length);
+  const statusList = [...new Set(data.clients.map(projectStatus))];
+  const orderedStatuses = [
+    ...PROJECT_STATUS_ORDER.filter((s) => statusList.includes(s)),
+    ...statusList.filter((s) => !PROJECT_STATUS_ORDER.includes(s)).sort(),
+  ];
 
   const filters = [
     ['all', 'Все'],
-    ['high', 'С высоким приоритетом'],
-    ['active', 'В работе'],
-    ['many', 'Много задач'],
+    ...orderedStatuses.map((s) => [s, s]),
   ];
+
+  const groups = {};
+  clients.forEach((c) => {
+    const s = projectStatus(c);
+    (groups[s] = groups[s] || []).push(c);
+  });
+
+  const renderCard = (c) => {
+    const total = c.task_count ?? c.tasks?.length ?? 0;
+    const progress = total ? Math.round((c.doneCount / total) * 100) : 0;
+    const ps = projectStatus(c);
+    return `
+      <article class="project-card" data-client="${esc(c.name || c.id)}" role="button" tabindex="0">
+        <div class="project-card__top">
+          <h3 class="project-card__name">${esc(c.name || c.id)}</h3>
+          <span class="badge ${statusBadgeClass(ps)}">${esc(ps)}</span>
+        </div>
+        <div class="project-card__meta">${domainBadge(c.domain)}</div>
+        <div class="project-card__counts">
+          <span><strong>${total}</strong>задач</span>
+          <span><strong>${c.highCount}</strong>высокий</span>
+          <span><strong>${c.activeCount}</strong>в работе</span>
+        </div>
+        <div class="progress-bar" title="${progress}% выполнено">
+          <div class="progress-bar__fill" style="width:${progress}%"></div>
+        </div>
+      </article>`;
+  };
+
+  const sections = (f === 'all' ? orderedStatuses : [f])
+    .filter((s) => groups[s]?.length)
+    .map((status) => `
+      <section class="status-section">
+        <header class="status-section__head">
+          <h2 class="status-section__title">${esc(status)}</h2>
+          <span class="status-section__count">${groups[status].length}</span>
+        </header>
+        <div class="project-grid">
+          ${groups[status].sort((a, b) => b.highCount - a.highCount).map(renderCard).join('')}
+        </div>
+      </section>`).join('');
 
   return `
     <div class="filters" id="project-filters">
       ${filters.map(([id, label]) => `
-        <button type="button" class="filter-btn ${f === id ? 'is-active' : ''}" data-filter="${id}">${label}</button>
+        <button type="button" class="filter-btn ${f === id ? 'is-active' : ''}" data-filter="${esc(id)}">${esc(label)}</button>
       `).join('')}
     </div>
-    <div class="project-grid">
-      ${clients.length ? clients.map((c) => {
-        const total = c.task_count ?? c.tasks?.length ?? 0;
-        const progress = total ? Math.round((c.doneCount / total) * 100) : 0;
-        return `
-          <article class="project-card" data-client="${esc(c.name || c.id)}" role="button" tabindex="0">
-            <div class="project-card__top">
-              <h3 class="project-card__name">${esc(c.name || c.id)}</h3>
-              ${domainBadge(c.domain)}
-            </div>
-            <div class="project-card__counts">
-              <span><strong>${total}</strong>задач</span>
-              <span><strong>${c.highCount}</strong>высокий</span>
-              <span><strong>${c.activeCount}</strong>в работе</span>
-            </div>
-            <div class="progress-bar" title="${progress}% выполнено">
-              <div class="progress-bar__fill" style="width:${progress}%"></div>
-            </div>
-          </article>`;
-      }).join('') : '<p class="empty" style="grid-column:1/-1">Ничего не найдено</p>'}
+    <div class="status-sections">
+      ${sections || '<p class="empty">Ничего не найдено</p>'}
     </div>`;
 }
 
@@ -559,7 +608,8 @@ function renderDrawer(client) {
     <h2>${esc(client.name)}</h2>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
       ${domainBadge(client.domain)}
-      ${client.status ? `<span class="badge badge--event">${esc(client.status)}</span>` : ''}
+      ${client.project_status ? `<span class="badge ${statusBadgeClass(client.project_status)}">${esc(client.project_status)}</span>` : ''}
+      ${client.deal_stage ? `<span class="badge badge--event">${esc(client.deal_stage)}</span>` : ''}
     </div>
   `;
 

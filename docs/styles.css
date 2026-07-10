@@ -412,6 +412,42 @@ input { border: none; outline: none; background: transparent; }
 .badge--overdue { background: rgba(201, 133, 122, 0.2); color: #9a5348; }
 .badge--event { background: var(--lavender-soft); color: #7a6b8f; }
 .badge--reminder { background: var(--peach-soft); color: #9a6f62; }
+.badge--sage { background: rgba(168, 197, 181, 0.25); color: #4a6b58; }
+.badge--lavender { background: var(--lavender-soft); color: #7a6b8f; }
+.badge--sky { background: rgba(142, 181, 201, 0.22); color: #5a7f94; }
+
+.status-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.status-section__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.status-section__title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.status-section__count {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--bg-soft);
+}
+
+.project-card__meta {
+  margin-bottom: 12px;
+}
 
 /* Lists */
 .list { list-style: none; margin: 0; padding: 0; }

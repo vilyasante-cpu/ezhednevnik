@@ -22,22 +22,32 @@ function Parse-Backlog([string]$Path) {
     $name = Split-Path (Split-Path $Path -Parent) -Leaf
     $tasks = [System.Collections.ArrayList]@()
     $contacts = @{}
-    $status = $null
+    $projectStatus = $null
+    $dealStage = $null
     $inBacklog = $false
+    $section = ''
+    $hdrProjectStatus = [string][char]0x0421 + [char]0x0442 + [char]0x0430 + [char]0x0442 + [char]0x0443 + [char]0x0441 + ' ' + [char]0x043f + [char]0x0440 + [char]0x043e + [char]0x0435 + [char]0x043a + [char]0x0442 + [char]0x0430
     $kOrg = [string][char]0x041e + [char]0x0440 + [char]0x0433 + [char]0x0430 + [char]0x043d + [char]0x0438 + [char]0x0437 + [char]0x0430 + [char]0x0446 + [char]0x0438 + [char]0x044f
     $kContact = [string][char]0x041a + [char]0x043e + [char]0x043d + [char]0x0442 + [char]0x0430 + [char]0x043a + [char]0x0442
     $kPhone = [string][char]0x0422 + [char]0x0435 + [char]0x043b + [char]0x0435 + [char]0x0444 + [char]0x043e + [char]0x043d
     $kCity = [string][char]0x0413 + [char]0x043e + [char]0x0440 + [char]0x043e + [char]0x0434
     $kType = [string][char]0x0422 + [char]0x0438 + [char]0x043f
     $kStage = [string][char]0x042d + [char]0x0442 + [char]0x0430 + [char]0x043f
+    $kStatus = [string][char]0x0421 + [char]0x0442 + [char]0x0430 + [char]0x0442 + [char]0x0443 + [char]0x0441
 
     foreach ($line in $lines) {
         $t = $line.Trim()
-        if ($t -eq '## Backlog') { $inBacklog = $true; continue }
-        if ($inBacklog -and $t -match '^## ') { $inBacklog = $false }
+        if ($t -match '^## ') {
+            $section = $t.Substring(3).Trim()
+            if ($t -eq '## Backlog') { $inBacklog = $true } else { $inBacklog = $false }
+            continue
+        }
         $cells = Get-Cells $t
         if ($cells -and $cells.Count -ge 2) {
-            if ($cells[0] -eq $kStage) { $status = $cells[1] }
+            if ($section -eq $hdrProjectStatus -and $cells[0] -eq $kStatus) {
+                $projectStatus = $cells[1]
+            }
+            if ($cells[0] -eq $kStage) { $dealStage = $cells[1] }
             if ($cells[0] -in @($kOrg, $kContact, $kPhone, $kCity, $kType)) {
                 $contacts[$cells[0]] = $cells[1]
             }
@@ -54,7 +64,8 @@ function Parse-Backlog([string]$Path) {
         name = $name
         path = $Path.Substring($CursorRoot.Length).TrimStart('\', '/')
         domain = Get-Domain $Path
-        status = $status
+        project_status = $projectStatus
+        deal_stage = $dealStage
         contacts = $contacts
         tasks = $tasks
     }
