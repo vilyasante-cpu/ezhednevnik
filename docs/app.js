@@ -228,7 +228,7 @@ function normalizeData(raw) {
     contacts: c.contacts || {},
     project_status: c.project_status || c.status || null,
     deal_stage: c.deal_stage || null,
-    profile: c.profile || null,
+    profile: normalizeClientProfile(c.profile),
     status: c.project_status || c.status || null,
     path: c.path || '',
     highCount: (c.tasks || []).filter((t) => /высок/i.test(t.priority)).length,
@@ -703,7 +703,7 @@ function renderEventDrawer(item) {
   ];
 
   const client = findClientByName(item.client);
-  const canClose = state.writable && !closed && item.key;
+  const canClose = canCloseEvent(item);
 
   $('#drawer-body').innerHTML = `
     <div class="drawer__section">
@@ -723,9 +723,13 @@ function renderEventDrawer(item) {
       </button>
       <p class="drawer__hint">Локально: закроет событие в КАЛЕНДАРЬ.md и зачеркнёт после синхронизации.</p>
     </div>` : ''}
-    ${!state.writable && !closed && !state.data?.isPublic ? `
+    ${!canClose && !closed && isLocalHost() && !item.key ? `
     <div class="drawer__section">
-      <p class="drawer__hint">Чтобы закрывать события, запустите <code>scripts/serve.ps1</code> (не простой static server).</p>
+      <p class="drawer__hint">У события нет ключа — выполните <code>scripts/sync_data.ps1</code> и обновите страницу.</p>
+    </div>` : ''}
+    ${!canClose && !closed && isLocalHost() && item.key && !state.writable ? `
+    <div class="drawer__section">
+      <p class="drawer__hint">Для записи в календарь запустите <code>scripts/serve.ps1</code> (не простой static server).</p>
     </div>` : ''}
     ${client ? `
     <div class="drawer__section">
@@ -742,6 +746,60 @@ function renderEventDrawer(item) {
 function isLocalHost() {
   const h = location.hostname;
   return h === 'localhost' || h === '127.0.0.1';
+}
+
+function canCloseEvent(item) {
+  return (state.writable || isLocalHost()) && !isEventClosed(item) && !!item.key;
+}
+
+function normalizeKvItems(block) {
+  if (block.items?.length) return block.items;
+  const rows = block.rows || [];
+  if (rows.length === 2 && typeof rows[0] === 'string' && typeof rows[1] === 'string') {
+    return [{ label: rows[0], value: rows[1] }];
+  }
+  return rows.map((row) => {
+    if (row?.label) return row;
+    if (Array.isArray(row) && row.length >= 2) return { label: row[0], value: row[1] };
+    return null;
+  }).filter(Boolean);
+}
+
+function normalizeTableRows(block) {
+  let rows = block.rows || [];
+  if (rows && !Array.isArray(rows)) rows = Object.values(rows);
+  return rows.map((row) => {
+    if (row?.cells) return row.cells;
+    if (Array.isArray(row)) return row;
+    return null;
+  }).filter((r) => Array.isArray(r) && r.length && !/^(—|-)+$/.test(r.join('')));
+}
+
+function normalizeProfileBlock(block) {
+  if (!block) return null;
+  if (block.kind === 'text') {
+    const text = (block.text || '').trim();
+    if (!text || /^\|?\s*---/.test(text)) return null;
+    return block;
+  }
+  if (block.kind === 'key_value') {
+    const items = normalizeKvItems(block);
+    return items.length ? { kind: 'key_value', items } : null;
+  }
+  if (block.kind === 'table') {
+    const rows = normalizeTableRows(block);
+    return rows.length ? { kind: 'table', headers: block.headers || [], rows } : null;
+  }
+  return block;
+}
+
+function normalizeClientProfile(profile) {
+  if (!profile) return null;
+  const sections = (profile.sections || []).map((sec) => ({
+    title: sec.title,
+    blocks: (sec.blocks || []).map(normalizeProfileBlock).filter(Boolean),
+  })).filter((sec) => sec.blocks.length > 0);
+  return { updated_note: profile.updated_note || null, sections };
 }
 
 function renderInlineText(text) {
@@ -771,10 +829,10 @@ function renderProfileBlock(block) {
     case 'key_value':
       return `
         <dl class="profile-kv">
-          ${(block.rows || []).map((row) => `
+          ${normalizeKvItems(block).map((item) => `
             <div class="profile-kv__row">
-              <dt>${esc(row[0])}</dt>
-              <dd>${renderInlineText(row[1])}</dd>
+              <dt>${esc(item.label)}</dt>
+              <dd>${renderInlineText(item.value)}</dd>
             </div>`).join('')}
         </dl>`;
     case 'table':
@@ -783,7 +841,7 @@ function renderProfileBlock(block) {
           <table class="profile-table">
             <thead><tr>${(block.headers || []).map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead>
             <tbody>
-              ${(block.rows || []).map((row) => `
+              ${normalizeTableRows(block).map((row) => `
                 <tr>${row.map((cell) => `<td>${renderInlineText(cell)}</td>`).join('')}</tr>
               `).join('')}
             </tbody>
@@ -806,7 +864,7 @@ function renderProfileBlock(block) {
 
 function renderFullClientDrawer(client) {
   const profile = client.profile || {};
-  const sections = profile.sections || [];
+  const sections = client.profile?.sections || [];
   const tasks = client.tasks || [];
 
   $('#drawer-header').innerHTML = `
@@ -924,7 +982,7 @@ function renderBasicClientDrawer(client) {
 
 function renderDrawer(client) {
   if (!client) return;
-  if (client.profile?.sections?.length && state.data?.hasFullProfiles) {
+  if (state.data?.hasFullProfiles && client.profile) {
     renderFullClientDrawer(client);
   } else {
     renderBasicClientDrawer(client);
@@ -978,6 +1036,13 @@ function renderSyncPanel(data) {
   const r = data.sync_report;
   const syncBtn = $('#sync-time');
   const panel = $('#sidebar-sync');
+
+  if (data.isPublic) {
+    syncBtn.textContent = `Обновлено ${formatSyncTime(data.generated_at)}`;
+    syncBtn.classList.remove('is-ok');
+    panel.hidden = true;
+    return;
+  }
 
   if (!r) {
     syncBtn.textContent = `Обновлено ${formatSyncTime(data.generated_at)}`;
@@ -1159,7 +1224,7 @@ function showDrawer() {
 
 function openClientDrawer(client) {
   renderDrawer(client);
-  const wide = !!(client?.profile?.sections?.length && state.data?.hasFullProfiles);
+  const wide = !!(state.data?.hasFullProfiles && client?.profile);
   $('#drawer').classList.toggle('drawer--wide', wide);
   showDrawer();
 }
@@ -1210,7 +1275,7 @@ async function checkWritable() {
 }
 
 async function closeEvent(item) {
-  if (!item?.key || state.closingEvent || !state.writable) return;
+  if (!item?.key || state.closingEvent || !canCloseEvent(item)) return;
   state.closingEvent = true;
   renderEventDrawer(item);
 

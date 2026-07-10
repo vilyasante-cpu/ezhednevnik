@@ -21,6 +21,7 @@ function New-ProfileSection([string]$Title) {
 
 function Add-TextBlock($Section, [string]$Text) {
     if (-not $Text -or -not $Text.Trim()) { return }
+    if ($Text.Trim() -match '^\|?\s*---') { return }
     $last = if ($Section.blocks.Count -gt 0) { $Section.blocks[$Section.blocks.Count - 1] } else { $null }
     if ($last -and $last.kind -eq 'text') {
         $last.text = $last.text + "`n" + $Text.Trim()
@@ -29,11 +30,21 @@ function Add-TextBlock($Section, [string]$Text) {
     }
 }
 
+function Test-SeparatorRow($Cells) {
+    if (-not $Cells -or $Cells.Count -eq 0) { return $true }
+    foreach ($c in $Cells) {
+        $t = ($c -replace '\s', '').Trim()
+        if ($t -and $t -notmatch '^-+$') { return $false }
+    }
+    return $true
+}
+
 function Flush-TableBuffer($Section, [System.Collections.ArrayList]$Buffer) {
     if ($Buffer.Count -eq 0) { return }
     $kStatus = [string][char]0x0421 + [char]0x0442 + [char]0x0430 + [char]0x0442 + [char]0x0443 + [char]0x0441
-    $rows = @($Buffer | ForEach-Object { ,@($_) })
+    $rows = @($Buffer | Where-Object { -not (Test-SeparatorRow $_) } | ForEach-Object { ,@($_) })
     $Buffer.Clear() | Out-Null
+    if ($rows.Count -eq 0) { return }
 
     $header = $rows[0]
     $dataRows = if ($rows.Count -gt 1) { $rows[1..($rows.Count - 1)] } else { @() }
@@ -56,28 +67,39 @@ function Flush-TableBuffer($Section, [System.Collections.ArrayList]$Buffer) {
         foreach ($r in $rows) {
             if ($r.Count -ge 2 -and $r[0] -ne 'ID' -and $r[0] -ne $kHdrField -and $r[0] -ne $kHdrParam -and $r[0] -ne $kStatus -and $r[0] -ne $kHdrAllowed) {
                 $val = ($r[1..($r.Count - 1)] -join ' | ')
-                [void]$kv.Add(@($r[0], $val))
+                [void]$kv.Add(@{ label = $r[0]; value = $val })
             }
         }
         if ($kv.Count -gt 0) {
-            [void]$Section.blocks.Add(@{ kind = 'key_value'; rows = $kv.ToArray() })
+            [void]$Section.blocks.Add(@{ kind = 'key_value'; items = $kv.ToArray() })
         }
         return
     }
 
     if ($header.Count -ge 3) {
-        [void]$Section.blocks.Add(@{
-            kind = 'table'
-            headers = $header
-            rows = $dataRows
-        })
+        $tableRows = [System.Collections.ArrayList]@()
+        foreach ($r in $dataRows) {
+            if (Test-SeparatorRow $r) { continue }
+            [void]$tableRows.Add(@{ cells = @($r) })
+        }
+        if ($tableRows.Count -gt 0) {
+            [void]$Section.blocks.Add(@{
+                kind = 'table'
+                headers = $header
+                rows = $tableRows.ToArray()
+            })
+        }
         return
     }
 
+    $kvSingle = [System.Collections.ArrayList]@()
     foreach ($r in $rows) {
-        if ($r.Count -ge 2) {
-            [void]$Section.blocks.Add(@{ kind = 'key_value'; rows = @(@($r[0], ($r[1..($r.Count - 1)] -join ' | '))) })
+        if ($r.Count -ge 2 -and -not (Test-SeparatorRow $r)) {
+            [void]$kvSingle.Add(@{ label = $r[0]; value = ($r[1..($r.Count - 1)] -join ' | ') })
         }
+    }
+    if ($kvSingle.Count -gt 0) {
+        [void]$Section.blocks.Add(@{ kind = 'key_value'; items = $kvSingle.ToArray() })
     }
 }
 
@@ -230,12 +252,15 @@ function Parse-Backlog([string]$Path, [string]$Root) {
     foreach ($sec in $profileSections) {
         foreach ($block in $sec.blocks) {
             if ($block.kind -ne 'key_value') { continue }
-            foreach ($row in $block.rows) {
-                if ($row.Count -lt 2) { continue }
-                if ($row[0] -eq $kStage) { $dealStage = $row[1] }
-                if ($sec.title -match $kPassport) {
-                    $contacts[$row[0]] = $row[1]
-                }
+            $items = if ($block.items) { $block.items } else { $block.rows }
+            foreach ($item in $items) {
+                $label = $null
+                $value = $null
+                if ($item.label) { $label = $item.label; $value = $item.value }
+                elseif ($item.Count -ge 2) { $label = $item[0]; $value = $item[1] }
+                else { continue }
+                if ($label -eq $kStage) { $dealStage = $value }
+                if ($sec.title -match $kPassport) { $contacts[$label] = $value }
             }
         }
     }
