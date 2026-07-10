@@ -720,6 +720,14 @@ input { border: none; outline: none; background: transparent; }
 
 .list-item:hover { background: rgba(255,255,255,0.6); }
 
+.list-item--static {
+  cursor: default;
+}
+
+.list-item--static:hover {
+  background: transparent;
+}
+
 .list-item__stripe {
   width: 4px;
   min-height: 36px;
@@ -990,6 +998,15 @@ input { border: none; outline: none; background: transparent; }
 .project-card:hover {
   transform: translateY(-3px);
   box-shadow: var(--shadow-md);
+}
+
+.project-card--static {
+  cursor: default;
+}
+
+.project-card--static:hover {
+  transform: none;
+  box-shadow: none;
 }
 
 .project-card__top {

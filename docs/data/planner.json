@@ -1,45 +1,5 @@
 {
-    "generated_at":  "2026-07-10T13:17:45.0773492Z",
-    "sync_report":  {
-                        "status":  "ok",
-                        "generated_at":  "2026-07-10T13:17:45.0773492Z",
-                        "previous_sync_at":  "2026-07-10T13:10:27.1649404Z",
-                        "sources":  {
-                                        "backlog_files":  25,
-                                        "calendar_files":  2,
-                                        "domains":  [
-                                                        "3D",
-                                                        "PROVANCE"
-                                                    ]
-                                    },
-                        "transferred":  {
-                                            "clients":  25,
-                                            "tasks":  97,
-                                            "events":  3,
-                                            "deadlines":  6,
-                                            "closed_events":  0,
-                                            "closed_deadlines":  4,
-                                            "overdue_deadlines":  2,
-                                            "project_status":  {
-                                                                   "Переговоры":  1,
-                                                                   "Пауза":  24
-                                                               }
-                                        },
-                        "changes":  {
-                                        "clients":  "0",
-                                        "tasks":  "0",
-                                        "events":  "0",
-                                        "deadlines":  "0"
-                                    },
-                        "has_changes":  false,
-                        "outputs":  [
-                                        "data/planner.json",
-                                        "data/planner.local.json",
-                                        "web/data/planner.json",
-                                        "web/data/planner.local.json",
-                                        "docs/"
-                                    ]
-                    },
+    "generated_at":  "2026-07-10T13:19:29.5817567Z",
     "privacy":  "public",
     "notice":  "Names and companies allowed. Phones, emails, amounts removed.",
     "stats":  {

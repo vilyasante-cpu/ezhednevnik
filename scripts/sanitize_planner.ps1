@@ -110,32 +110,8 @@ foreach ($c in $publicClients) {
     $taskCount += @($c.tasks).Count
 }
 
-$publicReport = $Data.sync_report
-if ($publicReport) {
-    $publicReport = [ordered]@{
-        status = $publicReport.status
-        generated_at = $publicReport.generated_at
-        previous_sync_at = $publicReport.previous_sync_at
-        sources = $publicReport.sources
-        transferred = [ordered]@{
-            clients = $publicClients.Count
-            tasks = $taskCount
-            events = $eventCount
-            deadlines = $deadlineCount
-            closed_events = $closedEvents
-            closed_deadlines = $closedDeadlines
-            overdue_deadlines = $overdue
-            project_status = $publicReport.transferred.project_status
-        }
-        changes = $publicReport.changes
-        has_changes = $publicReport.has_changes
-        outputs = $publicReport.outputs
-    }
-}
-
 return [ordered]@{
     generated_at = $Data.generated_at
-    sync_report = $publicReport
     privacy = 'public'
     notice = 'Names and companies allowed. Phones, emails, amounts removed.'
     stats = [ordered]@{

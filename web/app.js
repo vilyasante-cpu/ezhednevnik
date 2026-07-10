@@ -236,7 +236,16 @@ function normalizeData(raw) {
     doneCount: (c.tasks || []).filter((t) => /выполн|закрыт|готов/i.test(t.status)).length,
   }));
 
-  return { ...raw, events, deadlines, clients, isPublic: raw.privacy === 'public', hasFullProfiles: !!raw.has_full_profiles };
+  const hasFullProfiles = !!raw.has_full_profiles;
+  return {
+    ...raw,
+    events,
+    deadlines,
+    clients,
+    sync_report: hasFullProfiles ? raw.sync_report : null,
+    isPublic: detectPublicMode(raw),
+    hasFullProfiles,
+  };
 }
 
 function allTasks(data) {
@@ -308,8 +317,9 @@ function filterBySearch(items, q, keys) {
 
 function renderTaskItem(task, opts = {}) {
   const stripe = opts.stripe || `stripe--${task.domain?.toLowerCase() === 'provance' ? 'provance' : '3d'}`;
+  const clickable = !state.data?.isPublic && opts.clickable !== false;
   return `
-    <li class="list-item" data-client="${esc(task.clientName)}" role="button" tabindex="0">
+    <li class="list-item${clickable ? '' : ' list-item--static'}"${clickable ? ` data-client="${esc(task.clientName)}" role="button" tabindex="0"` : ''}>
       <div class="list-item__stripe ${stripe}"></div>
       <div class="list-item__main">
         <p class="list-item__title">${esc(task.title)}</p>
@@ -623,8 +633,9 @@ function renderProjects(data) {
     const total = c.task_count ?? c.tasks?.length ?? 0;
     const progress = total ? Math.round((c.doneCount / total) * 100) : 0;
     const ps = projectStatus(c);
+    const clickable = !data.isPublic;
     return `
-      <article class="project-card" data-client="${esc(c.name || c.id)}" role="button" tabindex="0">
+      <article class="project-card${clickable ? '' : ' project-card--static'}"${clickable ? ` data-client="${esc(c.name || c.id)}" role="button" tabindex="0"` : ''}>
         <div class="project-card__top">
           <h3 class="project-card__name">${esc(c.name || c.id)}</h3>
           <span class="badge ${statusBadgeClass(ps)}">${esc(ps)}</span>
@@ -660,6 +671,7 @@ function renderProjects(data) {
         <button type="button" class="filter-btn ${f === id ? 'is-active' : ''}" data-filter="${esc(id)}">${esc(label)}</button>
       `).join('')}
     </div>
+    ${data.isPublic ? '<p class="drawer__hint drawer__hint--top">Полные карточки клиентов доступны только в локальной версии.</p>' : ''}
     <div class="status-sections">
       ${sections || '<p class="empty">Ничего не найдено</p>'}
     </div>`;
@@ -746,6 +758,18 @@ function renderEventDrawer(item) {
 function isLocalHost() {
   const h = location.hostname;
   return h === 'localhost' || h === '127.0.0.1';
+}
+
+function isHostedPublicSite() {
+  const h = location.hostname;
+  return h.includes('github.io') || h.includes('githubusercontent.com');
+}
+
+function detectPublicMode(raw = {}) {
+  if (raw.has_full_profiles) return false;
+  if (raw.privacy === 'public') return true;
+  if (isHostedPublicSite()) return true;
+  return !isLocalHost();
 }
 
 function canCloseEvent(item) {
@@ -1038,11 +1062,19 @@ function renderSyncPanel(data) {
   const panel = $('#sidebar-sync');
 
   if (data.isPublic) {
-    syncBtn.textContent = `Обновлено ${formatSyncTime(data.generated_at)}`;
-    syncBtn.classList.remove('is-ok');
-    panel.hidden = true;
+    if (syncBtn) {
+      syncBtn.textContent = `Обновлено ${formatSyncTime(data.generated_at)}`;
+      syncBtn.classList.remove('is-ok');
+      syncBtn.hidden = true;
+    }
+    if (panel) {
+      panel.hidden = true;
+      panel.innerHTML = '';
+    }
     return;
   }
+
+  if (syncBtn) syncBtn.hidden = false;
 
   if (!r) {
     syncBtn.textContent = `Обновлено ${formatSyncTime(data.generated_at)}`;
@@ -1223,6 +1255,7 @@ function showDrawer() {
 }
 
 function openClientDrawer(client) {
+  if (state.data?.isPublic) return;
   renderDrawer(client);
   const wide = !!(state.data?.hasFullProfiles && client?.profile);
   $('#drawer').classList.toggle('drawer--wide', wide);
@@ -1304,7 +1337,8 @@ async function closeEvent(item) {
 }
 
 async function loadData(preferFull = false) {
-  const paths = preferFull
+  const useLocal = preferFull && isLocalHost();
+  const paths = useLocal
     ? [
       'data/planner.local.json',
       '../data/planner.local.json',
@@ -1314,8 +1348,6 @@ async function loadData(preferFull = false) {
     : [
       'data/planner.json',
       '../data/planner.json',
-      'data/planner.local.json',
-      '../data/planner.local.json',
     ];
   let lastErr;
 
