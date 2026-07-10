@@ -85,40 +85,6 @@ function normalizeData(raw) {
   const events = [];
   const deadlines = [];
 
-  if (raw.privacy === 'public') {
-    for (const e of raw.events || []) {
-      if (e.type === 'deadline') {
-        deadlines.push({
-          date: e.date, status: e.status, client: '—',
-          event: e.title || 'Контрольная дата', domain: '3D', source: 'deadline',
-        });
-      } else if (e.date && !e.date.includes('ГГГГ')) {
-        events.push({
-          date: e.date, time: e.time, type: e.type, status: e.status,
-          client: '—', title: e.title || e.type || 'Событие', domain: '3D', source: 'event',
-        });
-      }
-    }
-    const clients = (raw.clients || []).map((c) => ({
-      name: c.id,
-      id: c.id,
-      domain: c.domain,
-      path: '',
-      tasks: (c.tasks || []).map((t) => ({
-        id: t.id,
-        title: t.title,
-        priority: t.priority,
-        status: t.status,
-        assignee: t.assignee || '—',
-      })),
-      highCount: c.high_priority ?? 0,
-      activeCount: c.active ?? 0,
-      doneCount: 0,
-      task_count: c.task_count ?? (c.tasks || []).length,
-    }));
-    return { ...raw, events, deadlines, clients, isPublic: true };
-  }
-
   for (const cal of raw.calendars || []) {
     for (const e of cal.events || []) {
       if (isTemplateEvent(e)) continue;
@@ -133,12 +99,15 @@ function normalizeData(raw) {
     ...c,
     name: c.name || c.id,
     tasks: c.tasks || [],
+    contacts: c.contacts || {},
+    status: c.status || null,
+    path: c.path || '',
     highCount: (c.tasks || []).filter((t) => /высок/i.test(t.priority)).length,
     activeCount: (c.tasks || []).filter((t) => /выполнению|в работе/i.test(t.status)).length,
     doneCount: (c.tasks || []).filter((t) => /выполн|закрыт|готов/i.test(t.status)).length,
   }));
 
-  return { ...raw, events, deadlines, clients };
+  return { ...raw, events, deadlines, clients, isPublic: raw.privacy === 'public' };
 }
 
 function allTasks(data) {
@@ -526,12 +495,30 @@ function renderDrawer(client) {
   if (!client) return;
 
   const tasks = client.tasks || [];
+  const contacts = client.contacts || {};
+  const contactRows = Object.entries(contacts)
+    .filter(([k]) => k !== 'Телефон')
+    .map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`)
+    .join('');
+
   $('#drawer-header').innerHTML = `
     <h2>${esc(client.name)}</h2>
-    <div style="display:flex;gap:8px;margin-top:8px">${domainBadge(client.domain)}</div>
+    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+      ${domainBadge(client.domain)}
+      ${client.status ? `<span class="badge badge--event">${esc(client.status)}</span>` : ''}
+    </div>
   `;
 
   $('#drawer-body').innerHTML = `
+    ${contactRows ? `
+    <div class="drawer__section">
+      <h3>Контакты</h3>
+      <div class="table-wrap">
+        <table>
+          <tbody>${contactRows}</tbody>
+        </table>
+      </div>
+    </div>` : ''}
     <div class="drawer__section">
       <h3>Задачи (${tasks.length})</h3>
       ${tasks.length ? `
@@ -550,10 +537,11 @@ function renderDrawer(client) {
           </table>
         </div>` : '<p class="empty">Задач нет</p>'}
     </div>
+    ${client.path ? `
     <div class="drawer__section">
       <h3>Исходный файл</h3>
       <div class="drawer__path">${esc(client.path)}</div>
-    </div>
+    </div>` : ''}
   `;
 }
 
@@ -713,7 +701,7 @@ async function init() {
     if (state.data.isPublic) {
       const banner = document.createElement('p');
       banner.className = 'privacy-banner';
-      banner.textContent = 'Публичный снимок: ФИО отображаются. Клиенты, телефоны и суммы скрыты.';
+      banner.textContent = 'Публичный снимок: имена и компании видны. Телефоны, почта и суммы скрыты.';
       document.querySelector('.content')?.prepend(banner);
     }
     renderSidebarStats(state.data);
