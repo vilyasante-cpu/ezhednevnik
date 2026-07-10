@@ -1,14 +1,19 @@
 # Sanitize planner.json for public Git / GitHub Pages (ASCII-only source)
 param([Parameter(Mandatory)][object]$Data)
 
-function Strip-SensitiveText([string]$Text) {
+function Strip-SensitiveText([string]$Text, [string[]]$ClientNames) {
     if (-not $Text) { return $Text }
     $t = $Text
+    foreach ($name in ($ClientNames | Sort-Object { $_.Length } -Descending)) {
+        if ($name -and $name.Length -gt 2) {
+            $t = $t -replace [regex]::Escape($name), '[client]'
+        }
+    }
+    $t = [regex]::Replace($t, '@[\w\.\-]+', '[messenger]')
     $t = [regex]::Replace($t, '\+?\d[\d\s\-\(\)]{8,}\d', '[redacted]')
     $t = [regex]::Replace($t, '[\w.\-]+@[\w.\-]+\.\w+', '[redacted]')
     $t = [regex]::Replace($t, '\d+[\s\u00a0]*(?:RUB|USD|EUR|\$)', '[amount]')
     $t = [regex]::Replace($t, '(?i)\d+[\s]*K/mes', '[amount]')
-  # amounts with ruble sign (unicode)
     $t = [regex]::Replace($t, '\d+[\s\u00a0]*\u20bd', '[amount]')
     $t = [regex]::Replace($t, '(?i)\d+\s*(?:tys|k)\s*/\s*mes', '[amount]')
     return $t
@@ -16,8 +21,10 @@ function Strip-SensitiveText([string]$Text) {
 
 function Sanitize-Assignee([string]$Name) {
     if (-not $Name -or $Name -eq [char]0x2014 -or $Name -eq '-') { return $null }
-    return (Strip-SensitiveText $Name.Trim())
+    return $Name.Trim()
 }
+
+$clientNames = @($Data.clients | ForEach-Object { $_.name } | Where-Object { $_ })
 
 $idx = 0
 $publicClients = [System.Collections.ArrayList]@()
@@ -33,7 +40,7 @@ foreach ($c in ($Data.clients | Sort-Object { $_.name })) {
         $assignee = Sanitize-Assignee $task.assignee
         [void]$publicTasks.Add([ordered]@{
             id = $task.id
-            title = (Strip-SensitiveText $task.title)
+            title = (Strip-SensitiveText $task.title $clientNames)
             priority = $task.priority
             status = $task.status
             assignee = $assignee
@@ -56,8 +63,8 @@ foreach ($cal in $Data.calendars) {
         [void]$publicEvents.Add([ordered]@{
             date = $e.date
             time = $e.time
-            type = (Strip-SensitiveText $e.type)
-            title = (Strip-SensitiveText $e.title)
+            type = (Strip-SensitiveText $e.type $clientNames)
+            title = (Strip-SensitiveText $e.title $clientNames)
             status = $e.status
         })
     }
@@ -65,7 +72,7 @@ foreach ($cal in $Data.calendars) {
         [void]$publicEvents.Add([ordered]@{
             date = $d.date
             type = 'deadline'
-            title = (Strip-SensitiveText $d.event)
+            title = (Strip-SensitiveText $d.event $clientNames)
             status = $d.status
         })
     }
