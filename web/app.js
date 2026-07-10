@@ -726,6 +726,89 @@ function renderSidebarStats(data) {
     задач в работе<br>
     ${data.stats.clients} клиентов · ${data.stats.tasks} всего
   `;
+  renderSyncPanel(data);
+}
+
+function formatSyncTime(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleString('ru-RU', {
+    day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
+  });
+}
+
+function deltaClass(value) {
+  if (value === 'new' || (typeof value === 'string' && value.startsWith('+'))) return 'is-up';
+  if (typeof value === 'string' && value.startsWith('-')) return 'is-down';
+  return 'is-same';
+}
+
+function renderSyncPanel(data) {
+  const r = data.sync_report;
+  const syncBtn = $('#sync-time');
+  const panel = $('#sidebar-sync');
+
+  if (!r) {
+    syncBtn.textContent = `Обновлено ${formatSyncTime(data.generated_at)}`;
+    syncBtn.classList.remove('is-ok');
+    panel.hidden = true;
+    return;
+  }
+
+  syncBtn.textContent = `Синхронизация OK · ${formatSyncTime(r.generated_at)}`;
+  syncBtn.classList.add('is-ok');
+  panel.hidden = false;
+
+  const t = r.transferred || {};
+  const changes = r.changes || {};
+  const sources = r.sources || {};
+  const statuses = t.project_status || {};
+  const statusRows = Object.entries(statuses)
+    .sort((a, b) => b[1] - a[1])
+    .map(([name, count]) => `<li><span>${esc(name)}</span><strong>${count}</strong></li>`)
+    .join('');
+
+  const changeRows = [
+    ['Клиенты', changes.clients],
+    ['Задачи', changes.tasks],
+    ['События', changes.events],
+    ['Дедлайны', changes.deadlines],
+  ].map(([label, value]) => `
+    <li>
+      <span>${esc(label)}</span>
+      <span class="sync-panel__delta ${deltaClass(value)}">${esc(String(value ?? '0'))}</span>
+    </li>`).join('');
+
+  panel.innerHTML = `
+    <div class="sync-panel__head">
+      <span class="sync-panel__status" aria-hidden="true"></span>
+      <h3 class="sync-panel__title">Передано в систему</h3>
+    </div>
+    <div class="sync-panel__grid">
+      <div class="sync-panel__metric"><strong>${t.clients ?? 0}</strong><span>клиентов</span></div>
+      <div class="sync-panel__metric"><strong>${t.tasks ?? 0}</strong><span>задач</span></div>
+      <div class="sync-panel__metric"><strong>${t.events ?? 0}</strong><span>событий</span></div>
+      <div class="sync-panel__metric"><strong>${t.deadlines ?? 0}</strong><span>дедлайнов</span></div>
+    </div>
+    <p class="sync-panel__sources">
+      Источники: ${sources.backlog_files ?? 0} BACKLOG.md,
+      ${sources.calendar_files ?? 0} календарь
+      ${sources.domains?.length ? ` · ${esc(sources.domains.join(', '))}` : ''}
+    </p>
+    <div class="sync-panel__section">
+      <h4>Изменения с прошлой выгрузки</h4>
+      <ul class="sync-panel__list">${changeRows}</ul>
+    </div>
+    ${statusRows ? `
+    <div class="sync-panel__section">
+      <h4>Статусы проектов</h4>
+      <ul class="sync-panel__list">${statusRows}</ul>
+    </div>` : ''}
+    ${r.previous_sync_at ? `<p class="sync-panel__sources">Прошлая выгрузка: ${formatSyncTime(r.previous_sync_at)}</p>` : ''}
+  `;
+}
+
+function updateSyncUi(data) {
+  renderSyncPanel(data);
 }
 
 function initQuickLinks() {
@@ -907,8 +990,6 @@ async function closeEvent(item) {
     if (!res.ok) throw new Error(payload.error || `HTTP ${res.status}`);
 
     state.data = await loadData();
-    const gen = new Date(state.data.generated_at);
-    $('#sync-time').textContent = `Обновлено ${gen.toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}`;
     renderSidebarStats(state.data);
     render();
 
@@ -925,10 +1006,10 @@ async function closeEvent(item) {
 
 async function loadData() {
   const paths = [
-    'data/planner.local.json',
-    '../data/planner.local.json',
     'data/planner.json',
     '../data/planner.json',
+    'data/planner.local.json',
+    '../data/planner.local.json',
   ];
   let lastErr;
 
@@ -953,8 +1034,6 @@ async function init() {
   try {
     state.writable = await checkWritable();
     state.data = await loadData();
-    const gen = new Date(state.data.generated_at);
-    $('#sync-time').textContent = `Обновлено ${gen.toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}`;
     const brandSub = document.querySelector('.brand-sub');
     if (brandSub) {
       brandSub.textContent = state.writable
@@ -964,7 +1043,7 @@ async function init() {
     if (state.data.isPublic) {
       const banner = document.createElement('p');
       banner.className = 'privacy-banner';
-      banner.textContent = 'Публичный снимок: имена и компании видны. Телефоны, почта и суммы скрыты.';
+      banner.textContent = 'Единый снимок с GitHub: те же клиенты, задачи и календарь. Телефоны и суммы скрыты.';
       document.querySelector('.content')?.prepend(banner);
     }
     renderSidebarStats(state.data);
@@ -992,6 +1071,13 @@ async function init() {
   $('#drawer-close').addEventListener('click', closeDrawer);
   $('#overlay').addEventListener('click', closeDrawer);
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDrawer(); });
+
+  $('#sync-time')?.addEventListener('click', () => {
+    const panel = $('#sidebar-sync');
+    if (!panel || panel.hidden) return;
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    $('.sidebar')?.classList.add('is-open');
+  });
 
   // Mobile menu
   $('#menu-toggle')?.addEventListener('click', () => {

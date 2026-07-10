@@ -45,6 +45,7 @@ foreach ($c in ($Data.clients | Sort-Object { $_.name })) {
     [void]$publicClients.Add([ordered]@{
         name = $c.name
         domain = $c.domain
+        path = $c.path
         project_status = $c.project_status
         deal_stage = $c.deal_stage
         contacts = (Sanitize-Contacts $c.contacts)
@@ -66,6 +67,7 @@ foreach ($cal in $Data.calendars) {
             type = (Strip-SensitiveText $e.type)
             title = (Strip-SensitiveText $e.title)
             status = $e.status
+            comment = (Strip-SensitiveText $e.comment)
             closed = [bool]$e.closed
         })
     }
@@ -76,6 +78,7 @@ foreach ($cal in $Data.calendars) {
             client = (Strip-SensitiveText $d.client)
             event = (Strip-SensitiveText $d.event)
             status = $d.status
+            comment = (Strip-SensitiveText $d.comment)
             closed = [bool]$d.closed
         })
     }
@@ -87,20 +90,59 @@ foreach ($cal in $Data.calendars) {
 }
 
 $overdue = 0
-foreach ($cal in $Data.calendars) {
-    foreach ($d in $cal.deadlines) {
+$eventCount = 0
+$deadlineCount = 0
+$taskCount = 0
+$closedEvents = 0
+$closedDeadlines = 0
+foreach ($cal in $publicCalendars) {
+    foreach ($e in @($cal.events)) {
+        $eventCount++
+        if ($e.closed) { $closedEvents++ }
+    }
+    foreach ($d in @($cal.deadlines)) {
+        $deadlineCount++
+        if ($d.closed) { $closedDeadlines++ }
         if ($d.status -match '(?i)prosroch|\u043f\u0440\u043e\u0441\u0440\u043e\u0447') { $overdue++ }
+    }
+}
+foreach ($c in $publicClients) {
+    $taskCount += @($c.tasks).Count
+}
+
+$publicReport = $Data.sync_report
+if ($publicReport) {
+    $publicReport = [ordered]@{
+        status = $publicReport.status
+        generated_at = $publicReport.generated_at
+        previous_sync_at = $publicReport.previous_sync_at
+        sources = $publicReport.sources
+        transferred = [ordered]@{
+            clients = $publicClients.Count
+            tasks = $taskCount
+            events = $eventCount
+            deadlines = $deadlineCount
+            closed_events = $closedEvents
+            closed_deadlines = $closedDeadlines
+            overdue_deadlines = $overdue
+            project_status = $publicReport.transferred.project_status
+        }
+        changes = $publicReport.changes
+        has_changes = $publicReport.has_changes
+        outputs = $publicReport.outputs
     }
 }
 
 return [ordered]@{
     generated_at = $Data.generated_at
+    sync_report = $publicReport
     privacy = 'public'
     notice = 'Names and companies allowed. Phones, emails, amounts removed.'
     stats = [ordered]@{
         clients = $publicClients.Count
-        tasks = $Data.stats.tasks
-        upcoming_events = $Data.stats.upcoming_events
+        tasks = $taskCount
+        upcoming_events = $eventCount
+        deadlines = $deadlineCount
         overdue_deadlines = $overdue
     }
     domains = $Data.domains

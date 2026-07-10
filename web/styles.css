@@ -227,6 +227,104 @@ input { border: none; outline: none; background: transparent; }
   margin-bottom: 2px;
 }
 
+.sidebar__sync {
+  margin-top: 12px;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid var(--border);
+  font-size: 0.76rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.sync-panel__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.sync-panel__status {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--sage);
+  box-shadow: 0 0 0 3px rgba(168, 197, 181, 0.35);
+  flex-shrink: 0;
+}
+
+.sync-panel__title {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.sync-panel__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 10px;
+  margin-bottom: 10px;
+}
+
+.sync-panel__metric strong {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.sync-panel__metric span {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.sync-panel__section {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.sync-panel__section h4 {
+  margin: 0 0 6px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.sync-panel__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sync-panel__list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.sync-panel__delta {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.sync-panel__delta.is-up { color: #5f7d61; }
+.sync-panel__delta.is-down { color: #9a5348; }
+.sync-panel__delta.is-same { color: var(--text-muted); }
+
+.sync-panel__sources {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
 /* Main */
 .main {
   display: flex;
@@ -317,10 +415,24 @@ input { border: none; outline: none; background: transparent; }
 
 .sync-time {
   margin: 0;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.55);
+  font-family: var(--font);
   font-size: 0.75rem;
   color: var(--text-muted);
   white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--duration) var(--ease), color var(--duration) var(--ease);
 }
+
+.sync-time:hover {
+  background: var(--elevated);
+  color: var(--text);
+}
+
+.sync-time.is-ok { border-color: rgba(168, 197, 181, 0.55); }
 
 .content {
   flex: 1;

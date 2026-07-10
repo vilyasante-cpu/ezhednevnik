@@ -1,11 +1,52 @@
 {
-    "generated_at":  "2026-07-10T12:43:47.7634643Z",
+    "generated_at":  "2026-07-10T12:52:34.7321643Z",
+    "sync_report":  {
+                        "status":  "ok",
+                        "generated_at":  "2026-07-10T12:52:34.7321643Z",
+                        "previous_sync_at":  "2026-07-10T12:50:14.0454749Z",
+                        "sources":  {
+                                        "backlog_files":  25,
+                                        "calendar_files":  2,
+                                        "domains":  [
+                                                        "3D",
+                                                        "PROVANCE"
+                                                    ]
+                                    },
+                        "transferred":  {
+                                            "clients":  25,
+                                            "tasks":  97,
+                                            "events":  3,
+                                            "deadlines":  6,
+                                            "closed_events":  0,
+                                            "closed_deadlines":  4,
+                                            "overdue_deadlines":  2,
+                                            "project_status":  {
+                                                                   "Переговоры":  1,
+                                                                   "Пауза":  24
+                                                               }
+                                        },
+                        "changes":  {
+                                        "clients":  "0",
+                                        "tasks":  "0",
+                                        "events":  "0",
+                                        "deadlines":  "0"
+                                    },
+                        "has_changes":  false,
+                        "outputs":  [
+                                        "data/planner.json",
+                                        "data/planner.local.json",
+                                        "web/data/planner.json",
+                                        "web/data/planner.local.json",
+                                        "docs/"
+                                    ]
+                    },
     "privacy":  "public",
     "notice":  "Names and companies allowed. Phones, emails, amounts removed.",
     "stats":  {
                   "clients":  25,
                   "tasks":  97,
                   "upcoming_events":  3,
+                  "deadlines":  6,
                   "overdue_deadlines":  2
               },
     "domains":  [
@@ -16,6 +57,7 @@
                     {
                         "name":  "169.ru",
                         "domain":  "3D",
+                        "path":  "3D\\Проекты\\169.ru\\BACKLOG.md",
                         "project_status":  "Пауза",
                         "deal_stage":  "Потенциальный",
                         "contacts":  {
@@ -58,6 +100,7 @@
                     {
                         "name":  "Belwood",
                         "domain":  "3D",
+                        "path":  "3D\\Проекты\\Belwood\\BACKLOG.md",
                         "project_status":  "Пауза",
                         "deal_stage":  "Холодный лид",
                         "contacts":  {
@@ -85,6 +128,7 @@
                     {
                         "name":  "BOXX",
                         "domain":  "3D",
+                        "path":  "3D\\Проекты\\BOXX\\BACKLOG.md",
                         "project_status":  "Пауза",
                         "deal_stage":  "КП отправлено, ожидание решения",
                         "contacts":  {
@@ -141,6 +185,7 @@
                     {
                         "name":  "Modul-online",
                         "domain":  "3D",
+                        "path":  "3D\\Проекты\\Modul-online\\BACKLOG.md",
                         "project_status":  "Пауза",
                         "deal_stage":  "Холодный лид",
                         "contacts":  {
@@ -168,6 +213,7 @@
                     {
                         "name":  "Santehnika-online",
                         "domain":  "3D",
+                        "path":  "3D\\Проекты\\Santehnika-online\\BACKLOG.md",
                         "project_status":  "Пауза",
                         "deal_stage":  "Холодный лид",
                         "contacts":  {
@@ -195,6 +241,7 @@
                     {
                         "name":  "Sima-land",
                         "domain":  "3D",
+                        "path":  "3D\\Проекты\\Sima-land\\BACKLOG.md",
                         "project_status":  "Пауза",
                         "deal_stage":  "Холодный лид",
                         "contacts":  {
@@ -222,6 +269,7 @@
                     {
                         "name":  "Spadardreva",
                         "domain":  "3D",
+                        "path":  "3D\\Проекты\\Spadardreva\\BACKLOG.md",
                         "project_status":  "Пауза",
                         "deal_stage":  "Холодный лид",
                         "contacts":  {
@@ -242,6 +290,7 @@
                     {
                         "name":  "SV-Мебель",
                         "domain":  "3D",
+                        "path":  "3D\\Проекты\\SV-Мебель\\BACKLOG.md",
                         "project_status":  "Пауза",
                         "deal_stage":  "Холодный / поиск контакта",
                         "contacts":  {
@@ -275,6 +324,7 @@
                     {
                         "name":  "Артис",
                         "domain":  "3D",
+                        "path":  "3D\\Проекты\\Артис\\BACKLOG.md",
                         "project_status":  "Пауза",
                         "deal_stage":  "Срок",
                         "contacts":  {
@@ -343,6 +393,7 @@
                     {
                         "name":  "Герда",
                         "domain":  "3D",
+                        "path":  "3D\\Проекты\\Герда\\BACKLOG.md",
                         "project_status":  "Пауза",
                         "deal_stage":  "Действующий клиент",
                         "contacts":  {
@@ -377,6 +428,7 @@
                     {
                         "name":  "ДаКухни",
                         "domain":  "3D",
+                        "path":  "3D\\Проекты\\ДаКухни\\BACKLOG.md",
                         "project_status":  "Пауза",
                         "deal_stage":  "Потенциальный, реактивация",
                         "contacts":  {
@@ -419,6 +471,7 @@
                     {
                         "name":  "Империал",
                         "domain":  "3D",
+                        "path":  "3D\\Проекты\\Империал\\BACKLOG.md",
                         "project_status":  "Пауза",
                         "deal_stage":  "Действующий клиент",
                         "contacts":  {
@@ -452,6 +505,7 @@
                     {
                         "name":  "Интерьер центр",
                         "domain":  "3D",
+                        "path":  "3D\\Проекты\\Интерьер центр\\BACKLOG.md",
                         "project_status":  "Пауза",
                         "deal_stage":  "Неактивный",
                         "contacts":  {
@@ -486,6 +540,7 @@
                     {
                         "name":  "Камеол",
                         "domain":  "3D",
+                        "path":  "3D\\Проекты\\Камеол\\BACKLOG.md",
                         "project_status":  "Пауза",
                         "deal_stage":  "Действующий / развитие",
                         "contacts":  {
@@ -528,6 +583,7 @@
                     {
                         "name":  "ЛеМонлид",
                         "domain":  "3D",
+                        "path":  "3D\\Проекты\\ЛеМонлид\\BACKLOG.md",
                         "project_status":  "Пауза",
                         "deal_stage":  "КП и сравнительные материалы отправлены",
                         "contacts":  {
@@ -583,6 +639,7 @@
                     {
                         "name":  "МК Стиль",
                         "domain":  "3D",
+                        "path":  "3D\\Проекты\\МК Стиль\\BACKLOG.md",
                         "project_status":  "Пауза",
                         "deal_stage":  "Не конвертирован",
                         "contacts":  {
@@ -616,6 +673,7 @@
                     {
                         "name":  "МП Эра",
                         "domain":  "3D",
+                        "path":  "3D\\Проекты\\МП Эра\\BACKLOG.md",
                         "project_status":  "Пауза",
                         "deal_stage":  "Неактивный",
                         "contacts":  {
@@ -642,6 +700,7 @@
                     {
                         "name":  "Нонтон",
                         "domain":  "3D",
+                        "path":  "3D\\Проекты\\Нонтон\\BACKLOG.md",
                         "project_status":  "Пауза",
                         "deal_stage":  "Потенциальный, нужна проработка",
                         "contacts":  {
@@ -690,6 +749,7 @@
                     {
                         "name":  "Пирамида",
                         "domain":  "3D",
+                        "path":  "3D\\Проекты\\Пирамида\\BACKLOG.md",
                         "project_status":  "Пауза",
                         "deal_stage":  "Потенциальный",
                         "contacts":  {
@@ -731,6 +791,7 @@
                     {
                         "name":  "Реханна РБ Бобруйск",
                         "domain":  "3D",
+                        "path":  "3D\\Проекты\\Реханна РБ Бобруйск\\BACKLOG.md",
                         "project_status":  "Пауза",
                         "deal_stage":  "КП отправлено, ожидание решения",
                         "contacts":  {
@@ -787,6 +848,7 @@
                     {
                         "name":  "Сантан",
                         "domain":  "3D",
+                        "path":  "3D\\Проекты\\Сантан\\BACKLOG.md",
                         "project_status":  "Пауза",
                         "deal_stage":  "Действующий клиент",
                         "contacts":  {
@@ -814,6 +876,7 @@
                     {
                         "name":  "Стенд Мебель",
                         "domain":  "3D",
+                        "path":  "3D\\Проекты\\Стенд Мебель\\BACKLOG.md",
                         "project_status":  "Пауза",
                         "deal_stage":  "Потенциальный (реактивация)",
                         "contacts":  {
@@ -855,6 +918,7 @@
                     {
                         "name":  "Сура",
                         "domain":  "3D",
+                        "path":  "3D\\Проекты\\Сура\\BACKLOG.md",
                         "project_status":  "Пауза",
                         "deal_stage":  "Продление лицензий и API",
                         "contacts":  {
@@ -917,6 +981,7 @@
                     {
                         "name":  "ФАНТ-мебель",
                         "domain":  "3D",
+                        "path":  "3D\\Проекты\\ФАНТ-мебель\\BACKLOG.md",
                         "project_status":  "Пауза",
                         "deal_stage":  "Внедрение не доведено до подписки",
                         "contacts":  {
@@ -957,6 +1022,7 @@
                     {
                         "name":  "Юлия Леонова",
                         "domain":  "3D",
+                        "path":  "3D\\Проекты\\Юлия Леонова\\BACKLOG.md",
                         "project_status":  "Переговоры",
                         "deal_stage":  "Первый контакт, ожидание встречи",
                         "contacts":  {
@@ -1027,6 +1093,7 @@
                                              "type":  "Встреча / напоминание",
                                              "title":  "Написать в Telegram: демо 3D для дверей + партнёрство",
                                              "status":  "🔔 Запланировано",
+                                             "comment":  "Перенесено с 13.07",
                                              "closed":  false
                                          }
                                      ],
@@ -1037,6 +1104,7 @@
                                                 "client":  "Сура",
                                                 "event":  "Выдача КП CP-2026-0216-SM",
                                                 "status":  "Выполнено",
+                                                "comment":  "Продление 6 фреймов",
                                                 "closed":  true
                                             },
                                             {
@@ -1045,6 +1113,7 @@
                                                 "client":  "Реханна",
                                                 "event":  "Выдача КП CP-2026-0216-RB",
                                                 "status":  "Выполнено",
+                                                "comment":  "",
                                                 "closed":  true
                                             },
                                             {
@@ -1053,6 +1122,7 @@
                                                 "client":  "BOXX",
                                                 "event":  "Выдача КП CP-2026-0218-BOXX",
                                                 "status":  "Выполнено",
+                                                "comment":  "",
                                                 "closed":  true
                                             },
                                             {
@@ -1061,6 +1131,7 @@
                                                 "client":  "Сура, Реханна",
                                                 "event":  "Истечение срока КП (30 дней)",
                                                 "status":  "Просрочено",
+                                                "comment":  "Требуется актуализация КП или фиксация новых условий",
                                                 "closed":  false
                                             },
                                             {
@@ -1069,6 +1140,7 @@
                                                 "client":  "BOXX",
                                                 "event":  "Истечение срока КП («до марта 2026»)",
                                                 "status":  "Просрочено",
+                                                "comment":  "Связаться с Жанной, обновить КП",
                                                 "closed":  false
                                             },
                                             {
@@ -1077,6 +1149,7 @@
                                                 "client":  "Юлия Леонова",
                                                 "event":  "Запрос встречи (Telegram)",
                                                 "status":  "Выполнено",
+                                                "comment":  "Демо 3D Plan, рынок дверей",
                                                 "closed":  true
                                             }
                                         ]
@@ -1092,6 +1165,7 @@
                                              "type":  "Командировка",
                                              "title":  "Чебоксары — Йошкар-Ола",
                                              "status":  "🔔 Запланировано",
+                                             "comment":  "День 1",
                                              "closed":  false
                                          },
                                          {
@@ -1102,6 +1176,7 @@
                                              "type":  "Командировка",
                                              "title":  "Чебоксары — Йошкар-Ола",
                                              "status":  "🔔 Запланировано",
+                                             "comment":  "День 2",
                                              "closed":  false
                                          }
                                      ],

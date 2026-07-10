@@ -7,6 +7,7 @@ $DailyFolder = [string][char]0x0415 + [char]0x0436 + [char]0x0435 + [char]0x0434
 $CalendarName = [string][char]0x041A + [char]0x0410 + [char]0x041B + [char]0x0415 + [char]0x041D + [char]0x0414 + [char]0x0410 + [char]0x0420 + [char]0x042C + '.md'
 
 . (Join-Path $PSScriptRoot 'calendar_lib.ps1')
+. (Join-Path $PSScriptRoot 'sync_report.ps1')
 
 function Get-Domain([string]$Path) {
     $rel = $Path.Substring($CursorRoot.Length).TrimStart('\', '/')
@@ -131,10 +132,13 @@ function Parse-Calendar([string]$Path) {
 $clients = [System.Collections.ArrayList]@()
 $calendars = [System.Collections.ArrayList]@()
 $domains = @{}
+$backlogFiles = 0
+$calendarFiles = 0
 
 Get-ChildItem -Path $CursorRoot -Recurse -Filter "BACKLOG.md" |
     Where-Object { $_.FullName -notmatch $DailyFolder } |
     ForEach-Object {
+        $backlogFiles++
         $c = Parse-Backlog $_.FullName
         [void]$clients.Add($c)
         $domains[$c.domain] = $true
@@ -143,6 +147,7 @@ Get-ChildItem -Path $CursorRoot -Recurse -Filter "BACKLOG.md" |
 Get-ChildItem -Path $CursorRoot -Recurse -Filter $CalendarName |
     Where-Object { $_.FullName -notmatch $DailyFolder } |
     ForEach-Object {
+        $calendarFiles++
         $cal = Parse-Calendar $_.FullName
         [void]$calendars.Add($cal)
         $domains[$cal.domain] = $true
@@ -150,13 +155,37 @@ Get-ChildItem -Path $CursorRoot -Recurse -Filter $CalendarName |
 
 $allTasks = @($clients | ForEach-Object { $_.tasks })
 
+$previousPlanner = $null
+if (Test-Path $Output) {
+    try {
+        $previousPlanner = Get-Content $Output -Raw -Encoding UTF8 | ConvertFrom-Json
+    } catch { }
+}
+
+$syncReport = Build-SyncReport `
+    -Clients $clients `
+    -Calendars $calendars `
+    -Domains @($domains.Keys) `
+    -BacklogFiles $backlogFiles `
+    -CalendarFiles $calendarFiles `
+    -PreviousPlanner $previousPlanner `
+    -Outputs @(
+        'data/planner.json',
+        'data/planner.local.json',
+        'web/data/planner.json',
+        'web/data/planner.local.json',
+        'docs/'
+    )
+
 $data = [ordered]@{
-    generated_at = (Get-Date).ToUniversalTime().ToString('o')
+    generated_at = $syncReport.generated_at
     cursor_root = $CursorRoot
+    sync_report = $syncReport
     stats = [ordered]@{
         clients = $clients.Count
         tasks = $allTasks.Count
         upcoming_events = ($calendars | ForEach-Object { $_.events.Count } | Measure-Object -Sum).Sum
+        deadlines = ($calendars | ForEach-Object { $_.deadlines.Count } | Measure-Object -Sum).Sum
     }
     domains = @($domains.Keys | Sort-Object)
     clients = @($clients | Sort-Object name)
@@ -197,4 +226,5 @@ if (Test-Path $WebFolder) {
     }
 }
 
-Write-Host ("OK: local + public snapshots | clients=" + $clients.Count + " tasks=" + $allTasks.Count)
+Write-SyncReportHost $syncReport
+
