@@ -1,81 +1,84 @@
-# Sanitize planner.json for public Git / GitHub Pages (ASCII-only source)
+# Sanitize planner.json for Git / GitHub Pages
+# Allowed: FIO, companies, employees, client names
+# Blocked: phones, emails, amounts, local machine paths
 param([Parameter(Mandatory)][object]$Data)
 
-function Strip-SensitiveText([string]$Text, [string[]]$ClientNames) {
+function Strip-SensitiveText([string]$Text) {
     if (-not $Text) { return $Text }
     $t = $Text
-    foreach ($name in ($ClientNames | Sort-Object { $_.Length } -Descending)) {
-        if ($name -and $name.Length -gt 2) {
-            $t = $t -replace [regex]::Escape($name), '[client]'
-        }
-    }
-    $t = [regex]::Replace($t, '@[\w\.\-]+', '[messenger]')
-    $t = [regex]::Replace($t, '\+?\d[\d\s\-\(\)]{8,}\d', '[redacted]')
-    $t = [regex]::Replace($t, '[\w.\-]+@[\w.\-]+\.\w+', '[redacted]')
-    $t = [regex]::Replace($t, '\d+[\s\u00a0]*(?:RUB|USD|EUR|\$)', '[amount]')
-    $t = [regex]::Replace($t, '(?i)\d+[\s]*K/mes', '[amount]')
-    $t = [regex]::Replace($t, '\d+[\s\u00a0]*\u20bd', '[amount]')
-    $t = [regex]::Replace($t, '(?i)\d+\s*(?:tys|k)\s*/\s*mes', '[amount]')
+    $t = [regex]::Replace($t, '\+?\d[\d\s\-\(\)]{8,}\d', '[tel]')
+    $t = [regex]::Replace($t, '[\w.\-]+@[\w.\-]+\.\w+', '[email]')
+    $t = [regex]::Replace($t, '\d+[\s\u00a0]*(?:RUB|USD|EUR|\$|\u20bd)', '[amount]')
+    $t = [regex]::Replace($t, '(?i)\d+[\s]*K/[\u043c\u043c]?es', '[amount]')
+    $t = [regex]::Replace($t, '(?i)\d+\s*(?:\u0442\u044b\u0441\.?|tys\.?)\s*\u20bd', '[amount]')
     return $t
 }
 
 function Sanitize-Assignee([string]$Name) {
     if (-not $Name -or $Name -eq [char]0x2014 -or $Name -eq '-') { return $null }
-    return $Name.Trim()
+    return (Strip-SensitiveText $Name.Trim())
 }
 
-$clientNames = @($Data.clients | ForEach-Object { $_.name } | Where-Object { $_ })
+function Sanitize-Contacts([hashtable]$Contacts) {
+    if (-not $Contacts) { return @{} }
+    $out = @{}
+    $phoneKey = [string][char]0x0422 + [char]0x0435 + [char]0x043b + [char]0x0435 + [char]0x0444 + [char]0x043e + [char]0x043d
+    foreach ($key in $Contacts.Keys) {
+        if ($key -eq $phoneKey) { continue }
+        $out[$key] = Strip-SensitiveText $Contacts[$key]
+    }
+    return $out
+}
 
-$idx = 0
 $publicClients = [System.Collections.ArrayList]@()
 foreach ($c in ($Data.clients | Sort-Object { $_.name })) {
-    $idx++
-    $code = 'P-{0:D2}' -f $idx
     $publicTasks = [System.Collections.ArrayList]@()
-    $high = 0
-    $active = 0
     foreach ($task in @($c.tasks)) {
-        if ($task.priority -match '(?i)vysok|high|\u0432\u044b\u0441\u043e\u043a') { $high++ }
-        if ($task.status -match '(?i)vypoln|work|\u0432\u044b\u043f\u043e\u043b\u043d|\u0440\u0430\u0431\u043e\u0442') { $active++ }
-        $assignee = Sanitize-Assignee $task.assignee
         [void]$publicTasks.Add([ordered]@{
             id = $task.id
-            title = (Strip-SensitiveText $task.title $clientNames)
+            title = (Strip-SensitiveText $task.title)
             priority = $task.priority
             status = $task.status
-            assignee = $assignee
+            assignee = (Sanitize-Assignee $task.assignee)
         })
     }
     [void]$publicClients.Add([ordered]@{
-        id = $code
+        name = $c.name
         domain = $c.domain
-        task_count = $publicTasks.Count
-        high_priority = $high
-        active = $active
+        status = $c.status
+        contacts = (Sanitize-Contacts $c.contacts)
         tasks = $publicTasks
     })
 }
 
-$publicEvents = [System.Collections.ArrayList]@()
+$publicCalendars = [System.Collections.ArrayList]@()
 foreach ($cal in $Data.calendars) {
+    $events = [System.Collections.ArrayList]@()
+    $deadlines = [System.Collections.ArrayList]@()
     foreach ($e in $cal.events) {
         if ($e.date -match 'GGGG' -or $e.client -match '^\[') { continue }
-        [void]$publicEvents.Add([ordered]@{
+        [void]$events.Add([ordered]@{
             date = $e.date
             time = $e.time
-            type = (Strip-SensitiveText $e.type $clientNames)
-            title = (Strip-SensitiveText $e.title $clientNames)
+            client = (Strip-SensitiveText $e.client)
+            type = (Strip-SensitiveText $e.type)
+            title = (Strip-SensitiveText $e.title)
             status = $e.status
         })
     }
     foreach ($d in $cal.deadlines) {
-        [void]$publicEvents.Add([ordered]@{
+        [void]$deadlines.Add([ordered]@{
             date = $d.date
-            type = 'deadline'
-            title = (Strip-SensitiveText $d.event $clientNames)
+            client = (Strip-SensitiveText $d.client)
+            event = (Strip-SensitiveText $d.event)
             status = $d.status
         })
     }
+    [void]$publicCalendars.Add([ordered]@{
+        domain = $cal.domain
+        events = $events
+        deadlines = $deadlines
+    })
 }
 
 $overdue = 0
@@ -88,7 +91,7 @@ foreach ($cal in $Data.calendars) {
 return [ordered]@{
     generated_at = $Data.generated_at
     privacy = 'public'
-    notice = 'Public snapshot: FIO allowed. No phones, emails, clients, amounts.'
+    notice = 'Names and companies allowed. Phones, emails, amounts removed.'
     stats = [ordered]@{
         clients = $publicClients.Count
         tasks = $Data.stats.tasks
@@ -97,5 +100,5 @@ return [ordered]@{
     }
     domains = $Data.domains
     clients = $publicClients
-    events = $publicEvents
+    calendars = $publicCalendars
 }

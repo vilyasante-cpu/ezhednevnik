@@ -21,13 +21,27 @@ function Parse-Backlog([string]$Path) {
     $lines = [System.IO.File]::ReadAllLines($Path, [System.Text.Encoding]::UTF8)
     $name = Split-Path (Split-Path $Path -Parent) -Leaf
     $tasks = [System.Collections.ArrayList]@()
+    $contacts = @{}
+    $status = $null
     $inBacklog = $false
+    $kOrg = [string][char]0x041e + [char]0x0440 + [char]0x0433 + [char]0x0430 + [char]0x043d + [char]0x0438 + [char]0x0437 + [char]0x0430 + [char]0x0446 + [char]0x0438 + [char]0x044f
+    $kContact = [string][char]0x041a + [char]0x043e + [char]0x043d + [char]0x0442 + [char]0x0430 + [char]0x043a + [char]0x0442
+    $kPhone = [string][char]0x0422 + [char]0x0435 + [char]0x043b + [char]0x0435 + [char]0x0444 + [char]0x043e + [char]0x043d
+    $kCity = [string][char]0x0413 + [char]0x043e + [char]0x0440 + [char]0x043e + [char]0x0434
+    $kType = [string][char]0x0422 + [char]0x0438 + [char]0x043f
+    $kStage = [string][char]0x042d + [char]0x0442 + [char]0x0430 + [char]0x043f
 
     foreach ($line in $lines) {
         $t = $line.Trim()
         if ($t -eq '## Backlog') { $inBacklog = $true; continue }
         if ($inBacklog -and $t -match '^## ') { $inBacklog = $false }
         $cells = Get-Cells $t
+        if ($cells -and $cells.Count -ge 2) {
+            if ($cells[0] -eq $kStage) { $status = $cells[1] }
+            if ($cells[0] -in @($kOrg, $kContact, $kPhone, $kCity, $kType)) {
+                $contacts[$cells[0]] = $cells[1]
+            }
+        }
         if ($inBacklog -and $cells -and $cells.Count -ge 5 -and $cells[0] -match '\d' -and $cells[0] -ne 'ID') {
             [void]$tasks.Add(@{
                 id = $cells[0]; title = $cells[1]; priority = $cells[2]
@@ -40,6 +54,8 @@ function Parse-Backlog([string]$Path) {
         name = $name
         path = $Path.Substring($CursorRoot.Length).TrimStart('\', '/')
         domain = Get-Domain $Path
+        status = $status
+        contacts = $contacts
         tasks = $tasks
     }
 }

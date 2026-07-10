@@ -36,7 +36,7 @@
 
 Сайт (Pages): **https://vilyasante-cpu.github.io/ezhednevnik/** — только обезличенная статистика.
 
-**Приватность:** см. [GIT-PRIVACY.md](GIT-PRIVACY.md) — в Git запрещены контакты, клиенты, суммы.
+**Приватность:** см. [GIT-PRIVACY.md](GIT-PRIVACY.md) — в Git: имена и компании ✓, телефоны и суммы ✗.
 
 Деплой: **Deploy from a branch** → `main` → папка `/docs`
 
