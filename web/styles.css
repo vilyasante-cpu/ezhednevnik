@@ -628,6 +628,13 @@ input { border: none; outline: none; background: transparent; }
 
 .event-chip--reminder { border-left-color: var(--peach); background: var(--peach-soft); }
 .event-chip--deadline { border-left-color: var(--overdue); background: var(--rose-soft); }
+.event-chip.is-closed,
+.list-item.is-closed .list-item__title,
+.drawer h2.is-closed,
+.detail-list__row.is-closed dd {
+  text-decoration: line-through;
+  opacity: 0.72;
+}
 
 .event-chip__client { font-weight: 600; margin-bottom: 2px; }
 .event-chip__title { color: var(--text-secondary); }
@@ -946,6 +953,37 @@ tr:hover td { background: rgba(255,255,255,0.45); }
 }
 
 .drawer-link:hover { background: var(--elevated); }
+
+.btn-close-event {
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 12px;
+  background: var(--lavender-soft);
+  color: #5f4f72;
+  font-family: var(--font);
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--duration) var(--ease), opacity var(--duration) var(--ease);
+}
+
+.btn-close-event:hover:not(:disabled) { background: var(--lavender); color: #fff; }
+.btn-close-event:disabled { opacity: 0.6; cursor: wait; }
+
+.drawer__hint {
+  margin: 10px 0 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.drawer__hint code {
+  font-size: 0.76rem;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: var(--bg-soft);
+}
 
 .detail-list {
   margin: 0;

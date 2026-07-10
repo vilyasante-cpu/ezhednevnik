@@ -59,20 +59,24 @@ foreach ($cal in $Data.calendars) {
     foreach ($e in $cal.events) {
         if ($e.date -match 'GGGG' -or $e.client -match '^\[') { continue }
         [void]$events.Add([ordered]@{
+            key = $e.key
             date = $e.date
             time = $e.time
             client = (Strip-SensitiveText $e.client)
             type = (Strip-SensitiveText $e.type)
             title = (Strip-SensitiveText $e.title)
             status = $e.status
+            closed = [bool]$e.closed
         })
     }
     foreach ($d in $cal.deadlines) {
         [void]$deadlines.Add([ordered]@{
+            key = $d.key
             date = $d.date
             client = (Strip-SensitiveText $d.client)
             event = (Strip-SensitiveText $d.event)
             status = $d.status
+            closed = [bool]$d.closed
         })
     }
     [void]$publicCalendars.Add([ordered]@{

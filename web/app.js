@@ -27,6 +27,9 @@ const state = {
   calMode: 'week',
   calAnchor: startOfDay(new Date()),
   projectFilter: 'all',
+  writable: false,
+  drawerEvent: null,
+  closingEvent: false,
 };
 
 const $ = (sel) => document.querySelector(sel);
@@ -42,7 +45,7 @@ function startOfDay(d) {
 
 function parseRuDate(str) {
   if (!str || str.includes('ГГГГ') || str.startsWith('[')) return null;
-  const clean = str.replace(/^~/, '').trim();
+  const clean = str.replace(/~~/g, '').replace(/^~/, '').trim();
   const m = clean.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
   if (!m) return null;
   return new Date(+m[3], +m[2] - 1, +m[1]);
@@ -90,10 +93,24 @@ function normalizeData(raw) {
   for (const cal of raw.calendars || []) {
     for (const e of cal.events || []) {
       if (isTemplateEvent(e)) continue;
-      events.push({ ...e, id: `evt-${evtIdx++}`, domain: cal.domain, source: 'event' });
+      events.push({
+        ...e,
+        id: `evt-${evtIdx++}`,
+        key: e.key || null,
+        closed: !!e.closed,
+        domain: cal.domain,
+        source: 'event',
+      });
     }
     for (const d of cal.deadlines || []) {
-      deadlines.push({ ...d, id: `dl-${dlIdx++}`, domain: cal.domain, source: 'deadline' });
+      deadlines.push({
+        ...d,
+        id: `dl-${dlIdx++}`,
+        key: d.key || null,
+        closed: !!d.closed,
+        domain: cal.domain,
+        source: 'deadline',
+      });
     }
   }
 
@@ -205,6 +222,18 @@ function findEventById(id) {
     || state.data.deadlines.find((d) => d.id === id);
 }
 
+function findEventByKey(key) {
+  if (!state.data || !key) return null;
+  return state.data.events.find((e) => e.key === key)
+    || state.data.deadlines.find((d) => d.key === key);
+}
+
+function isEventClosed(item) {
+  if (!item) return false;
+  if (item.closed) return true;
+  return /выполн|закрыт/i.test(item.status || '');
+}
+
 function findClientByName(name) {
   if (!state.data || !name || name === '—') return null;
   return state.data.clients.find((c) => c.name === name)
@@ -217,8 +246,12 @@ function eventTitle(item) {
 
 function renderEventItem(e) {
   const isReminder = /напомин/i.test(e.type);
-  const chipClass = e.source === 'deadline' ? 'event-chip--deadline'
-    : isReminder ? 'event-chip--reminder' : '';
+  const closed = isEventClosed(e);
+  const chipClass = [
+    e.source === 'deadline' ? 'event-chip--deadline' : '',
+    isReminder ? 'event-chip--reminder' : '',
+    closed ? 'is-closed' : '',
+  ].filter(Boolean).join(' ');
   const title = eventTitle(e);
   return `
     <div class="event-chip ${chipClass}" data-event-id="${esc(e.id)}" role="button" tabindex="0" title="${esc(title)}">
@@ -228,14 +261,15 @@ function renderEventItem(e) {
 }
 
 function renderEventListItem(e, stripe = 'stripe--lavender') {
+  const closed = isEventClosed(e);
   const title = eventTitle(e);
   return `
-    <li class="list-item" data-event-id="${esc(e.id)}" role="button" tabindex="0">
+    <li class="list-item ${closed ? 'is-closed' : ''}" data-event-id="${esc(e.id)}" role="button" tabindex="0">
       <div class="list-item__stripe ${stripe}"></div>
       <div class="list-item__main">
         <p class="list-item__title">${esc(title)}</p>
         <div class="list-item__meta">
-          <span class="badge badge--event">${esc(e.type || 'Событие')}</span>
+          <span class="badge ${closed ? 'badge--low' : 'badge--event'}">${esc(closed ? 'Выполнено' : (e.type || 'Событие'))}</span>
           <span>${esc(e.client)}</span>
           ${e.time ? `<span>${esc(e.time)}</span>` : ''}
         </div>
@@ -547,16 +581,19 @@ function renderNotes() {
 
 function renderEventDrawer(item) {
   if (!item) return;
+  state.drawerEvent = item;
 
   const isDeadline = item.source === 'deadline';
   const title = eventTitle(item);
   const typeLabel = isDeadline ? 'Дедлайн' : (item.type || 'Событие');
-  const statusClass = /просроч/i.test(item.status) ? 'badge--overdue' : 'badge--event';
+  const closed = isEventClosed(item);
+  const statusClass = closed ? 'badge--low'
+    : /просроч/i.test(item.status) ? 'badge--overdue' : 'badge--event';
 
   $('#drawer-header').innerHTML = `
-    <h2>${esc(title)}</h2>
+    <h2 class="${closed ? 'is-closed' : ''}">${esc(title)}</h2>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-      <span class="badge ${statusClass}">${esc(item.status || '—')}</span>
+      <span class="badge ${statusClass}">${esc(closed ? 'Выполнено' : (item.status || '—'))}</span>
       <span class="badge badge--reminder">${esc(typeLabel)}</span>
       ${domainBadge(item.domain)}
     </div>
@@ -567,22 +604,34 @@ function renderEventDrawer(item) {
     ['Время', item.time || '—'],
     ['Клиент', item.client || '—'],
     ['Тип', typeLabel],
-    ['Статус', item.status || '—'],
+    ['Статус', closed ? 'Выполнено' : (item.status || '—')],
   ];
 
   const client = findClientByName(item.client);
+  const canClose = state.writable && !closed && item.key;
 
   $('#drawer-body').innerHTML = `
     <div class="drawer__section">
       <h3>Информация о событии</h3>
       <dl class="detail-list">
         ${rows.map(([k, v]) => `
-          <div class="detail-list__row">
+          <div class="detail-list__row ${closed ? 'is-closed' : ''}">
             <dt>${esc(k)}</dt>
             <dd>${esc(v)}</dd>
           </div>`).join('')}
       </dl>
     </div>
+    ${canClose ? `
+    <div class="drawer__section">
+      <button type="button" class="btn-close-event" id="btn-close-event" ${state.closingEvent ? 'disabled' : ''}>
+        ${state.closingEvent ? 'Закрываем…' : 'Закрыть событие'}
+      </button>
+      <p class="drawer__hint">Запишется в КАЛЕНДАРЬ.md и при следующей синхронизации отобразится зачёркнутым.</p>
+    </div>` : ''}
+    ${!state.writable && !closed && !state.data?.isPublic ? `
+    <div class="drawer__section">
+      <p class="drawer__hint">Чтобы закрывать события, запустите <code>scripts/serve.ps1</code> (не простой static server).</p>
+    </div>` : ''}
     ${client ? `
     <div class="drawer__section">
       <button type="button" class="drawer-link" id="drawer-open-client">
@@ -592,6 +641,7 @@ function renderEventDrawer(item) {
   `;
 
   $('#drawer-open-client')?.addEventListener('click', () => openClientDrawer(client));
+  $('#btn-close-event')?.addEventListener('click', () => closeEvent(item));
 }
 
 function renderDrawer(client) {
@@ -822,6 +872,48 @@ function showError(msg) {
     </div>`;
 }
 
+async function checkWritable() {
+  try {
+    const res = await fetch('/api/health');
+    if (!res.ok) return false;
+    const data = await res.json();
+    return !!data.writable;
+  } catch {
+    return false;
+  }
+}
+
+async function closeEvent(item) {
+  if (!item?.key || state.closingEvent || !state.writable) return;
+  state.closingEvent = true;
+  renderEventDrawer(item);
+
+  try {
+    const res = await fetch('/api/close-event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: item.key }),
+    });
+    const payload = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(payload.error || `HTTP ${res.status}`);
+
+    state.data = await loadData();
+    const gen = new Date(state.data.generated_at);
+    $('#sync-time').textContent = `Обновлено ${gen.toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}`;
+    renderSidebarStats(state.data);
+    render();
+
+    const updated = findEventByKey(item.key);
+    if (updated) openEventDrawer(updated);
+    else closeDrawer();
+  } catch (e) {
+    alert(`Не удалось закрыть событие: ${e.message || e}`);
+    renderEventDrawer(item);
+  } finally {
+    state.closingEvent = false;
+  }
+}
+
 async function loadData() {
   const paths = [
     'data/planner.local.json',
@@ -849,9 +941,16 @@ async function init() {
   $('#page-date').textContent = formatPageDate(new Date());
 
   try {
+    state.writable = await checkWritable();
     state.data = await loadData();
     const gen = new Date(state.data.generated_at);
     $('#sync-time').textContent = `Обновлено ${gen.toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}`;
+    const brandSub = document.querySelector('.brand-sub');
+    if (brandSub) {
+      brandSub.textContent = state.writable
+        ? 'CURSOR · локальная запись'
+        : (state.data.isPublic ? 'CURSOR · публичный снимок' : 'CURSOR · только чтение');
+    }
     if (state.data.isPublic) {
       const banner = document.createElement('p');
       banner.className = 'privacy-banner';

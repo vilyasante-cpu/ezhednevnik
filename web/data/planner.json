@@ -1,15 +1,16 @@
 {
-    "generated_at":  "2026-07-10T12:24:22.9604848Z",
+    "generated_at":  "2026-07-10T12:38:15.0414896Z",
     "privacy":  "public",
     "notice":  "Names and companies allowed. Phones, emails, amounts removed.",
     "stats":  {
                   "clients":  25,
                   "tasks":  97,
-                  "upcoming_events":  2,
+                  "upcoming_events":  3,
                   "overdue_deadlines":  2
               },
     "domains":  [
-                    "3D"
+                    "3D",
+                    "PROVANCE"
                 ],
     "clients":  [
                     {
@@ -1019,63 +1020,93 @@
                           "domain":  "3D",
                           "events":  [
                                          {
+                                             "key":  "027965d6b576dfa5",
                                              "date":  "20.07.2026",
                                              "time":  null,
                                              "client":  "Юлия Леонова",
                                              "type":  "Встреча / напоминание",
                                              "title":  "Написать в Telegram: демо 3D для дверей + партнёрство",
-                                             "status":  "🔔 Запланировано"
+                                             "status":  "🔔 Запланировано",
+                                             "closed":  false
                                          }
                                      ],
                           "deadlines":  [
                                             {
+                                                "key":  "cecc45658cd1c5a2",
                                                 "date":  "16.02.2026",
                                                 "client":  "Сура",
                                                 "event":  "Выдача КП CP-2026-0216-SM",
-                                                "status":  "Выполнено"
+                                                "status":  "Выполнено",
+                                                "closed":  true
                                             },
                                             {
+                                                "key":  "769a21109c5fc08a",
                                                 "date":  "16.02.2026",
                                                 "client":  "Реханна",
                                                 "event":  "Выдача КП CP-2026-0216-RB",
-                                                "status":  "Выполнено"
+                                                "status":  "Выполнено",
+                                                "closed":  true
                                             },
                                             {
+                                                "key":  "c46738023a9bcd1b",
                                                 "date":  "18.02.2026",
                                                 "client":  "BOXX",
                                                 "event":  "Выдача КП CP-2026-0218-BOXX",
-                                                "status":  "Выполнено"
+                                                "status":  "Выполнено",
+                                                "closed":  true
                                             },
                                             {
+                                                "key":  "5e80877625535d0a",
                                                 "date":  "~18.03.2026",
                                                 "client":  "Сура, Реханна",
                                                 "event":  "Истечение срока КП (30 дней)",
-                                                "status":  "Просрочено"
+                                                "status":  "Просрочено",
+                                                "closed":  false
                                             },
                                             {
+                                                "key":  "eb22fb0a27457e63",
                                                 "date":  "~31.03.2026",
                                                 "client":  "BOXX",
                                                 "event":  "Истечение срока КП («до марта 2026»)",
-                                                "status":  "Просрочено"
+                                                "status":  "Просрочено",
+                                                "closed":  false
                                             },
                                             {
+                                                "key":  "961ad9a7474f3c60",
                                                 "date":  "06.07.2026",
                                                 "client":  "Юлия Леонова",
                                                 "event":  "Запрос встречи (Telegram)",
-                                                "status":  "Выполнено"
-                                            },
-                                            {
-                                                "date":  "10.07.2026",
-                                                "client":  "Юлия Леонова",
-                                                "event":  "Перенос встречи",
-                                                "status":  "Выполнено"
-                                            },
-                                            {
-                                                "date":  "10.07.2026",
-                                                "client":  "Все",
-                                                "event":  "Импорт из `База 3Д.xlsx`",
-                                                "status":  "Создано 19 новых папок, обновлены BOXX, Реханна, ЛеМонлид, Сура"
+                                                "status":  "Выполнено",
+                                                "closed":  true
                                             }
+                                        ]
+                      },
+                      {
+                          "domain":  "PROVANCE",
+                          "events":  [
+                                         {
+                                             "key":  "9c2089553f464a31",
+                                             "date":  "13.07.2026",
+                                             "time":  null,
+                                             "client":  "PROVANCE",
+                                             "type":  "Командировка",
+                                             "title":  "Чебоксары — Йошкар-Ола",
+                                             "status":  "🔔 Запланировано",
+                                             "closed":  false
+                                         },
+                                         {
+                                             "key":  "9e587d095e8547e7",
+                                             "date":  "14.07.2026",
+                                             "time":  null,
+                                             "client":  "PROVANCE",
+                                             "type":  "Командировка",
+                                             "title":  "Чебоксары — Йошкар-Ола",
+                                             "status":  "🔔 Запланировано",
+                                             "closed":  false
+                                         }
+                                     ],
+                          "deadlines":  [
+
                                         ]
                       }
                   ]
