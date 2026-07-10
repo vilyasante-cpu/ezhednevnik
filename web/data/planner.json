@@ -1,5 +1,5 @@
 {
-    "generated_at":  "2026-07-10T12:10:45.4785235Z",
+    "generated_at":  "2026-07-10T12:11:22.1706858Z",
     "privacy":  "public",
     "notice":  "Public snapshot: FIO allowed. No phones, emails, clients, amounts.",
     "stats":  {
@@ -185,7 +185,7 @@
                                       },
                                       {
                                           "id":  "SL-02",
-                                          "title":  "Подготовить питч под масштаб Sima-land",
+                                          "title":  "Подготовить питч под масштаб [client]",
                                           "priority":  "Низкий",
                                           "status":  "Не начато",
                                           "assignee":  null
@@ -224,7 +224,7 @@
                                       },
                                       {
                                           "id":  "SV-02",
-                                          "title":  "Уточнить у Нонтона историю оплаты",
+                                          "title":  "Уточнить у [client]а историю оплаты",
                                           "priority":  "Средний",
                                           "status":  "Не начато",
                                           "assignee":  null
@@ -342,7 +342,7 @@
                         "tasks":  [
                                       {
                                           "id":  "DK-01",
-                                          "title":  "Возобновить контакт в Telegram @da_kyhni",
+                                          "title":  "Возобновить контакт в Telegram [messenger]",
                                           "priority":  "Высокий",
                                           "status":  "К выполнению",
                                           "assignee":  "Рафаэль"
@@ -564,7 +564,7 @@
                                       },
                                       {
                                           "id":  "ME-02",
-                                          "title":  "Уточнить у Нонтона детали проекта",
+                                          "title":  "Уточнить у [client]а детали проекта",
                                           "priority":  "Низкий",
                                           "status":  "Не начато",
                                           "assignee":  null
@@ -940,7 +940,7 @@
                    {
                        "date":  "18.02.2026",
                        "type":  "deadline",
-                       "title":  "Выдача КП CP-2026-0218-BOXX",
+                       "title":  "Выдача КП CP-2026-0218-[client]",
                        "status":  "Выполнено"
                    },
                    {
