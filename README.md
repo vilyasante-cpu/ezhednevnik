@@ -29,3 +29,31 @@
 | `coder` | Код, сборка, деплой |
 
 В чате: «используй skill calendar-scheduler — поставь встречу…»
+
+## GitHub
+
+Репозиторий: **https://github.com/vilyasante-cpu/ezhednevnik** (приватный)
+
+## Автосинхронизация
+
+Цепочка: `BACKLOG.md` / `КАЛЕНДАРЬ.md` в CURSOR → `planner.json` → git push → GitHub Pages.
+
+### Разовая синхронизация
+
+```powershell
+powershell -File scripts/auto_sync.ps1
+```
+
+### Авто каждые 30 минут (Windows)
+
+```powershell
+powershell -File scripts/install_autosync_task.ps1
+```
+
+### Фоновый watcher (проверка каждую минуту)
+
+```powershell
+powershell -File scripts/watch_sync.ps1
+```
+
+Удалить задачу: `powershell -File scripts/install_autosync_task.ps1 -Uninstall`

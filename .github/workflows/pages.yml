@@ -20,16 +20,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Sync planner data
-        run: python3 scripts/sync_data.py
-        continue-on-error: true
-
-      - name: Ensure web data exists
+      - name: Verify web data
         run: |
-          mkdir -p web/data
-          if [ ! -f web/data/planner.json ] && [ -f data/planner.json ]; then
-            cp data/planner.json web/data/planner.json
-          fi
+          test -f web/data/planner.json || (echo "Missing web/data/planner.json — run auto_sync locally" && exit 1)
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
