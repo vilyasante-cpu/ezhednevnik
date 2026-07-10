@@ -728,6 +728,15 @@ function renderSidebarStats(data) {
   `;
 }
 
+function initQuickLinks() {
+  const host = location.hostname;
+  const isLocal = host === 'localhost' || host === '127.0.0.1';
+  $$('[data-quick]').forEach((el) => {
+    el.classList.toggle('is-active', (el.dataset.quick === 'local' && isLocal)
+      || (el.dataset.quick === 'public' && !isLocal));
+  });
+}
+
 function bindViewEvents() {
   // Calendar controls
   $('#cal-prev')?.addEventListener('click', () => {
@@ -939,6 +948,7 @@ async function loadData() {
 
 async function init() {
   $('#page-date').textContent = formatPageDate(new Date());
+  initQuickLinks();
 
   try {
     state.writable = await checkWritable();

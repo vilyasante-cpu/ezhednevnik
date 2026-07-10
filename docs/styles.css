@@ -160,6 +160,54 @@ input { border: none; outline: none; background: transparent; }
 
 .nav-item.is-active .nav-icon { opacity: 1; }
 
+.sidebar__quick {
+  margin-top: 8px;
+  padding: 0 10px;
+}
+
+.sidebar__quick-title {
+  margin: 0 0 8px 12px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.quick-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  margin-bottom: 4px;
+  border-radius: var(--radius-md);
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: background var(--duration) var(--ease), color var(--duration) var(--ease);
+}
+
+.quick-link:hover {
+  background: rgba(255, 255, 255, 0.55);
+  color: var(--text);
+}
+
+.quick-link.is-active {
+  background: var(--elevated);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
+
+.quick-link__icon {
+  width: 20px;
+  text-align: center;
+  opacity: 0.55;
+  font-size: 0.85rem;
+}
+
+.quick-link.is-active .quick-link__icon { opacity: 1; }
+
 .sidebar__stats {
   margin-top: auto;
   padding: 16px;
