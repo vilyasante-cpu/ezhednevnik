@@ -123,21 +123,36 @@ $data = [ordered]@{
 
 $outDir = Split-Path $Output -Parent
 if (-not (Test-Path $outDir)) { New-Item -ItemType Directory -Path $outDir -Force | Out-Null }
-$json = $data | ConvertTo-Json -Depth 10
-[System.IO.File]::WriteAllText($Output, $json, [System.Text.UTF8Encoding]::new($false))
 
-$WebOutput = Join-Path (Split-Path $PSScriptRoot -Parent) "web\data\planner.json"
-$webDir = Split-Path $WebOutput -Parent
-if (-not (Test-Path $webDir)) { New-Item -ItemType Directory -Path $webDir -Force | Out-Null }
-[System.IO.File]::WriteAllText($WebOutput, $json, [System.Text.UTF8Encoding]::new($false))
-
-# Mirror web -> docs (GitHub Pages: deploy from branch /docs)
 $RepoRoot = Split-Path $PSScriptRoot -Parent
+$fullJson = $data | ConvertTo-Json -Depth 10
+
+# Full snapshot — local only (gitignored)
+$LocalOutput = Join-Path $outDir "planner.local.json"
+[System.IO.File]::WriteAllText($LocalOutput, $fullJson, [System.Text.UTF8Encoding]::new($false))
+
+$WebLocal = Join-Path $RepoRoot "web\data\planner.local.json"
+$webDataDir = Split-Path $WebLocal -Parent
+if (-not (Test-Path $webDataDir)) { New-Item -ItemType Directory -Path $webDataDir -Force | Out-Null }
+[System.IO.File]::WriteAllText($WebLocal, $fullJson, [System.Text.UTF8Encoding]::new($false))
+
+# Sanitized snapshot — safe for Git / GitHub Pages
+$publicData = & (Join-Path $PSScriptRoot "sanitize_planner.ps1") -Data $data
+$publicJson = $publicData | ConvertTo-Json -Depth 10
+[System.IO.File]::WriteAllText($Output, $publicJson, [System.Text.UTF8Encoding]::new($false))
+
+$WebOutput = Join-Path $RepoRoot "web\data\planner.json"
+[System.IO.File]::WriteAllText($WebOutput, $publicJson, [System.Text.UTF8Encoding]::new($false))
+
+# Mirror web -> docs (Pages); planner.json in docs is already sanitized
 $WebFolder = Join-Path $RepoRoot "web"
 $DocsFolder = Join-Path $RepoRoot "docs"
 if (Test-Path $WebFolder) {
     if (Test-Path $DocsFolder) { Remove-Item $DocsFolder -Recurse -Force }
     Copy-Item $WebFolder $DocsFolder -Recurse
+    if (Test-Path (Join-Path $DocsFolder "data\planner.local.json")) {
+        Remove-Item (Join-Path $DocsFolder "data\planner.local.json") -Force
+    }
 }
 
-Write-Host ("OK: " + $Output + " + web/data + docs | clients=" + $clients.Count + " tasks=" + $allTasks.Count)
+Write-Host ("OK: local + public snapshots | clients=" + $clients.Count + " tasks=" + $allTasks.Count)

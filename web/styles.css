@@ -896,6 +896,16 @@ tr:hover td { background: rgba(255,255,255,0.45); }
   border-radius: var(--radius-sm);
 }
 
+.privacy-banner {
+  margin: 0 0 16px;
+  padding: 12px 18px;
+  border-radius: var(--radius-md);
+  background: var(--lavender-soft);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  border: 1px solid rgba(197, 184, 212, 0.35);
+}
+
 /* Bottom nav */
 .bottom-nav {
   display: none;

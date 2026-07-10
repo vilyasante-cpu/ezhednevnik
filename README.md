@@ -34,10 +34,11 @@
 
 Репозиторий: **https://github.com/vilyasante-cpu/ezhednevnik**
 
-Сайт (Pages): **https://vilyasante-cpu.github.io/ezhednevnik/**
+Сайт (Pages): **https://vilyasante-cpu.github.io/ezhednevnik/** — только обезличенная статистика.
 
-Деплой: **Deploy from a branch** → `main` → папка `/docs`  
-Папка `docs/` — зеркало `web/`, обновляется при каждом sync.
+**Приватность:** см. [GIT-PRIVACY.md](GIT-PRIVACY.md) — в Git запрещены контакты, клиенты, суммы.
+
+Деплой: **Deploy from a branch** → `main` → папка `/docs`
 
 ## Автосинхронизация
 

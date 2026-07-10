@@ -19,3 +19,8 @@ __pycache__/
 # Env / secrets
 .env
 .env.*
+
+# Full planner data (local only — never push)
+**/planner.local.json
+data/planner.local.json
+web/data/planner.local.json

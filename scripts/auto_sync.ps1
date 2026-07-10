@@ -16,7 +16,17 @@ Log "Sync data..." "Cyan"
 & (Join-Path $PSScriptRoot "sync_data.ps1") | Out-Null
 
 Set-Location $RepoRoot
-$status = & $Git status --porcelain data/ web/ docs/ 2>&1
+
+# Block accidental commit of local full data
+$tracked = & $Git ls-files --others --exclude-standard 2>&1
+$localLeak = & $Git diff --cached --name-only 2>&1 | Where-Object { $_ -match 'planner\.local\.json' }
+if ($localLeak) {
+    & $Git reset HEAD -- $localLeak 2>&1 | Out-Null
+    Write-Error "Blocked: planner.local.json must not be committed"
+    exit 1
+}
+
+$status = & $Git status --porcelain data/planner.json web/data/planner.json docs/ 2>&1
 if (-not $status) {
     Log "No changes — skip push" "DarkGray"
     exit 0
@@ -24,7 +34,7 @@ if (-not $status) {
 
 $ts = Get-Date -Format "dd.MM.yyyy HH:mm"
 $commitMsg = if ($Message) { $Message } else { "sync: planner.json $ts" }
-& $Git add data/planner.json web/ docs/
+& $Git add data/planner.json web/data/planner.json docs/
 & $Git -c user.name="Ezhednevnik Sync" -c user.email="pc@users.noreply.github.com" commit -m $commitMsg
 Log "Committed: $commitMsg" "Green"
 

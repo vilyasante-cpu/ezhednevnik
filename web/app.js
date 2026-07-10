@@ -85,6 +85,34 @@ function normalizeData(raw) {
   const events = [];
   const deadlines = [];
 
+  if (raw.privacy === 'public') {
+    for (const e of raw.events || []) {
+      if (e.type === 'deadline') {
+        deadlines.push({
+          date: e.date, status: e.status, client: '—',
+          event: 'Контрольная дата', domain: '3D', source: 'deadline',
+        });
+      } else if (e.date && !e.date.includes('ГГГГ')) {
+        events.push({
+          date: e.date, time: e.time, type: e.type, status: e.status,
+          client: '—', title: e.type || 'Событие', domain: '3D', source: 'event',
+        });
+      }
+    }
+    const clients = (raw.clients || []).map((c) => ({
+      name: c.id,
+      id: c.id,
+      domain: c.domain,
+      path: '',
+      tasks: [],
+      highCount: c.high_priority ?? 0,
+      activeCount: c.active ?? 0,
+      doneCount: 0,
+      task_count: c.task_count ?? 0,
+    }));
+    return { ...raw, events, deadlines, clients, isPublic: true };
+  }
+
   for (const cal of raw.calendars || []) {
     for (const e of cal.events || []) {
       if (isTemplateEvent(e)) continue;
@@ -97,10 +125,11 @@ function normalizeData(raw) {
 
   const clients = (raw.clients || []).map((c) => ({
     ...c,
+    name: c.name || c.id,
     tasks: c.tasks || [],
-    highCount: c.tasks.filter((t) => /высок/i.test(t.priority)).length,
-    activeCount: c.tasks.filter((t) => /выполнению|в работе/i.test(t.status)).length,
-    doneCount: c.tasks.filter((t) => /выполн|закрыт|готов/i.test(t.status)).length,
+    highCount: (c.tasks || []).filter((t) => /высок/i.test(t.priority)).length,
+    activeCount: (c.tasks || []).filter((t) => /выполнению|в работе/i.test(t.status)).length,
+    doneCount: (c.tasks || []).filter((t) => /выполн|закрыт|готов/i.test(t.status)).length,
   }));
 
   return { ...raw, events, deadlines, clients };
@@ -108,7 +137,9 @@ function normalizeData(raw) {
 
 function allTasks(data) {
   return data.clients.flatMap((c) =>
-    c.tasks.map((t) => ({ ...t, clientName: c.name, domain: c.domain, clientPath: c.path }))
+    (c.tasks || []).map((t) => ({
+      ...t, clientName: c.name || c.id, domain: c.domain, clientPath: c.path || '',
+    }))
   );
 }
 
@@ -455,12 +486,12 @@ function renderProjects(data) {
     </div>
     <div class="project-grid">
       ${clients.length ? clients.map((c) => {
-        const total = c.tasks.length;
+        const total = c.task_count ?? c.tasks?.length ?? 0;
         const progress = total ? Math.round((c.doneCount / total) * 100) : 0;
         return `
-          <article class="project-card" data-client="${esc(c.name)}" role="button" tabindex="0">
+          <article class="project-card" data-client="${esc(c.name || c.id)}" role="button" tabindex="0">
             <div class="project-card__top">
-              <h3 class="project-card__name">${esc(c.name)}</h3>
+              <h3 class="project-card__name">${esc(c.name || c.id)}</h3>
               ${domainBadge(c.domain)}
             </div>
             <div class="project-card__counts">
@@ -644,7 +675,12 @@ function showError(msg) {
 }
 
 async function loadData() {
-  const paths = ['data/planner.json', '../data/planner.json'];
+  const paths = [
+    'data/planner.local.json',
+    '../data/planner.local.json',
+    'data/planner.json',
+    '../data/planner.json',
+  ];
   let lastErr;
 
   for (const path of paths) {
@@ -668,6 +704,12 @@ async function init() {
     state.data = await loadData();
     const gen = new Date(state.data.generated_at);
     $('#sync-time').textContent = `Обновлено ${gen.toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}`;
+    if (state.data.isPublic) {
+      const banner = document.createElement('p');
+      banner.className = 'privacy-banner';
+      banner.textContent = 'Публичный снимок без персональных данных. Полная информация — локально.';
+      document.querySelector('.content')?.prepend(banner);
+    }
     renderSidebarStats(state.data);
     render();
   } catch (e) {
