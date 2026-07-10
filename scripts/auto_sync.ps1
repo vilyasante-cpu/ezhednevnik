@@ -28,7 +28,7 @@ if ($localLeak) {
 
 $status = & $Git status --porcelain data/planner.json web/data/planner.json docs/ 2>&1
 if (-not $status) {
-    Log "No changes — skip push" "DarkGray"
+    Log "No changes - skip push" "DarkGray"
     exit 0
 }
 
@@ -39,4 +39,4 @@ $commitMsg = if ($Message) { $Message } else { "sync: planner.json $ts" }
 Log "Committed: $commitMsg" "Green"
 
 & $Git push origin main
-Log "Pushed to GitHub — Pages redeploys from main/docs" "Green"
+Log "Pushed to GitHub - Pages redeploys from main/docs" "Green"

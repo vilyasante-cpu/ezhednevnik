@@ -90,12 +90,12 @@ function normalizeData(raw) {
       if (e.type === 'deadline') {
         deadlines.push({
           date: e.date, status: e.status, client: '—',
-          event: 'Контрольная дата', domain: '3D', source: 'deadline',
+          event: e.title || 'Контрольная дата', domain: '3D', source: 'deadline',
         });
       } else if (e.date && !e.date.includes('ГГГГ')) {
         events.push({
           date: e.date, time: e.time, type: e.type, status: e.status,
-          client: '—', title: e.type || 'Событие', domain: '3D', source: 'event',
+          client: '—', title: e.title || e.type || 'Событие', domain: '3D', source: 'event',
         });
       }
     }
@@ -104,11 +104,17 @@ function normalizeData(raw) {
       id: c.id,
       domain: c.domain,
       path: '',
-      tasks: [],
+      tasks: (c.tasks || []).map((t) => ({
+        id: t.id,
+        title: t.title,
+        priority: t.priority,
+        status: t.status,
+        assignee: t.assignee || '—',
+      })),
       highCount: c.high_priority ?? 0,
       activeCount: c.active ?? 0,
       doneCount: 0,
-      task_count: c.task_count ?? 0,
+      task_count: c.task_count ?? (c.tasks || []).length,
     }));
     return { ...raw, events, deadlines, clients, isPublic: true };
   }
@@ -707,7 +713,7 @@ async function init() {
     if (state.data.isPublic) {
       const banner = document.createElement('p');
       banner.className = 'privacy-banner';
-      banner.textContent = 'Публичный снимок без персональных данных. Полная информация — локально.';
+      banner.textContent = 'Публичный снимок: ФИО отображаются. Клиенты, телефоны и суммы скрыты.';
       document.querySelector('.content')?.prepend(banner);
     }
     renderSidebarStats(state.data);
