@@ -85,13 +85,15 @@ function normalizeData(raw) {
   const events = [];
   const deadlines = [];
 
+  let evtIdx = 0;
+  let dlIdx = 0;
   for (const cal of raw.calendars || []) {
     for (const e of cal.events || []) {
       if (isTemplateEvent(e)) continue;
-      events.push({ ...e, domain: cal.domain, source: 'event' });
+      events.push({ ...e, id: `evt-${evtIdx++}`, domain: cal.domain, source: 'event' });
     }
     for (const d of cal.deadlines || []) {
-      deadlines.push({ ...d, domain: cal.domain, source: 'deadline' });
+      deadlines.push({ ...d, id: `dl-${dlIdx++}`, domain: cal.domain, source: 'deadline' });
     }
   }
 
@@ -172,16 +174,49 @@ function renderTaskItem(task, opts = {}) {
     </li>`;
 }
 
+function findEventById(id) {
+  if (!state.data || !id) return null;
+  return state.data.events.find((e) => e.id === id)
+    || state.data.deadlines.find((d) => d.id === id);
+}
+
+function findClientByName(name) {
+  if (!state.data || !name || name === '—') return null;
+  return state.data.clients.find((c) => c.name === name)
+    || state.data.clients.find((c) => name.includes(c.name) || c.name.includes(name));
+}
+
+function eventTitle(item) {
+  return item.title || item.event || item.type || 'Событие';
+}
+
 function renderEventItem(e) {
   const isReminder = /напомин/i.test(e.type);
   const chipClass = e.source === 'deadline' ? 'event-chip--deadline'
     : isReminder ? 'event-chip--reminder' : '';
-  const title = e.title || e.event;
+  const title = eventTitle(e);
   return `
-    <div class="event-chip ${chipClass}" data-client="${esc(e.client)}" role="button" tabindex="0">
+    <div class="event-chip ${chipClass}" data-event-id="${esc(e.id)}" role="button" tabindex="0" title="${esc(title)}">
       <div class="event-chip__client">${esc(e.client)}${e.time ? ` · ${esc(e.time)}` : ''}</div>
       <div class="event-chip__title">${esc(title)}</div>
     </div>`;
+}
+
+function renderEventListItem(e, stripe = 'stripe--lavender') {
+  const title = eventTitle(e);
+  return `
+    <li class="list-item" data-event-id="${esc(e.id)}" role="button" tabindex="0">
+      <div class="list-item__stripe ${stripe}"></div>
+      <div class="list-item__main">
+        <p class="list-item__title">${esc(title)}</p>
+        <div class="list-item__meta">
+          <span class="badge badge--event">${esc(e.type || 'Событие')}</span>
+          <span>${esc(e.client)}</span>
+          ${e.time ? `<span>${esc(e.time)}</span>` : ''}
+        </div>
+      </div>
+      <div class="list-item__aside">${esc(e.date)}</div>
+    </li>`;
 }
 
 /* ── Views ── */
@@ -246,16 +281,7 @@ function renderToday(data) {
             <div class="card__body--flush">
               <ul class="list">
                 ${todayEvents.length
-                  ? todayEvents.map((e) => `<li class="list-item" style="cursor:default">
-                      <div class="list-item__stripe stripe--lavender"></div>
-                      <div class="list-item__main">
-                        <p class="list-item__title">${esc(e.title)}</p>
-                        <div class="list-item__meta">
-                          <span class="badge badge--reminder">${esc(e.type)}</span>
-                          <span>${esc(e.client)}</span>
-                        </div>
-                      </div>
-                    </li>`).join('')
+                  ? todayEvents.map((e) => renderEventListItem(e, 'stripe--lavender')).join('')
                   : '<li class="empty">На сегодня событий нет — день свободен</li>'}
               </ul>
             </div>
@@ -268,17 +294,7 @@ function renderToday(data) {
             <div class="card__body--flush">
               <ul class="list">
                 ${upcomingEvents.length
-                  ? upcomingEvents.map((e) => `<li class="list-item" data-client="${esc(e.client)}" role="button" tabindex="0">
-                      <div class="list-item__stripe stripe--peach"></div>
-                      <div class="list-item__main">
-                        <p class="list-item__title">${esc(e.title)}</p>
-                        <div class="list-item__meta">
-                          <span>${esc(e.date)}</span>
-                          <span>${esc(e.client)}</span>
-                          ${domainBadge(e.domain)}
-                        </div>
-                      </div>
-                    </li>`).join('')
+                  ? upcomingEvents.map((e) => renderEventListItem(e, 'stripe--peach')).join('')
                   : '<li class="empty">Нет запланированных событий</li>'}
               </ul>
             </div>
@@ -306,18 +322,7 @@ function renderToday(data) {
             </div>
             <div class="card__body--flush">
               <ul class="list">
-                ${overdue.map((d) => `
-                  <li class="list-item" data-client="${esc(d.client)}" role="button" tabindex="0">
-                    <div class="list-item__stripe stripe--peach"></div>
-                    <div class="list-item__main">
-                      <p class="list-item__title">${esc(d.event)}</p>
-                      <div class="list-item__meta">
-                        <span class="badge badge--overdue">${esc(d.status)}</span>
-                        <span>${esc(d.client)}</span>
-                        <span>${esc(d.date)}</span>
-                      </div>
-                    </div>
-                  </li>`).join('')}
+                ${overdue.map((d) => renderEventListItem({ ...d, title: d.event, type: 'Дедлайн', source: 'deadline' }, 'stripe--peach')).join('')}
               </ul>
             </div>
           </div>` : ''}
@@ -491,6 +496,55 @@ function renderNotes() {
     </div>`;
 }
 
+function renderEventDrawer(item) {
+  if (!item) return;
+
+  const isDeadline = item.source === 'deadline';
+  const title = eventTitle(item);
+  const typeLabel = isDeadline ? 'Дедлайн' : (item.type || 'Событие');
+  const statusClass = /просроч/i.test(item.status) ? 'badge--overdue' : 'badge--event';
+
+  $('#drawer-header').innerHTML = `
+    <h2>${esc(title)}</h2>
+    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+      <span class="badge ${statusClass}">${esc(item.status || '—')}</span>
+      <span class="badge badge--reminder">${esc(typeLabel)}</span>
+      ${domainBadge(item.domain)}
+    </div>
+  `;
+
+  const rows = [
+    ['Дата', item.date],
+    ['Время', item.time || '—'],
+    ['Клиент', item.client || '—'],
+    ['Тип', typeLabel],
+    ['Статус', item.status || '—'],
+  ];
+
+  const client = findClientByName(item.client);
+
+  $('#drawer-body').innerHTML = `
+    <div class="drawer__section">
+      <h3>Информация о событии</h3>
+      <dl class="detail-list">
+        ${rows.map(([k, v]) => `
+          <div class="detail-list__row">
+            <dt>${esc(k)}</dt>
+            <dd>${esc(v)}</dd>
+          </div>`).join('')}
+      </dl>
+    </div>
+    ${client ? `
+    <div class="drawer__section">
+      <button type="button" class="drawer-link" id="drawer-open-client">
+        Открыть карточку клиента: ${esc(client.name)}
+      </button>
+    </div>` : ''}
+  `;
+
+  $('#drawer-open-client')?.addEventListener('click', () => openClientDrawer(client));
+}
+
 function renderDrawer(client) {
   if (!client) return;
 
@@ -610,37 +664,87 @@ function bindViewEvents() {
     });
   });
 
-  // Open client drawer
+  // Open event drawer (calendar chips, today lists)
+  $$('[data-event-id]').forEach((el) => {
+    const open = (e) => {
+      e?.stopPropagation?.();
+      const item = findEventById(el.dataset.eventId);
+      if (item) openEventDrawer(item);
+    };
+    el.addEventListener('click', open);
+    el.addEventListener('keydown', (e) => { if (e.key === 'Enter') open(e); });
+  });
+
+  // Open client drawer (projects, tasks)
   $$('[data-client]').forEach((el) => {
+    if (el.dataset.eventId) return;
     const open = () => {
-      const name = el.dataset.client;
-      const client = state.data.clients.find((c) => c.name === name)
-        || state.data.clients.find((c) => name.includes(c.name) || c.name.includes(name));
-      if (client) openDrawer(client);
+      const client = findClientByName(el.dataset.client);
+      if (client) openClientDrawer(client);
     };
     el.addEventListener('click', open);
     el.addEventListener('keydown', (e) => { if (e.key === 'Enter') open(); });
   });
 
-  // Month cell click → week view
+  // Month cell: one event -> drawer; many -> day list; none -> week view
   $$('.month-cell[data-date]').forEach((cell) => {
     cell.addEventListener('click', () => {
       const d = parseRuDate(cell.dataset.date);
-      if (d) {
-        state.calAnchor = d;
-        state.calMode = 'week';
-        render();
+      if (!d) return;
+      const dayItems = [
+        ...state.data.events.filter((e) => { const dt = parseRuDate(e.date); return dt && sameDay(dt, d); }),
+        ...state.data.deadlines.filter((e) => { const dt = parseRuDate(e.date); return dt && sameDay(dt, d); }),
+      ];
+      if (dayItems.length === 1) {
+        openEventDrawer(dayItems[0]);
+        return;
       }
+      if (dayItems.length > 1) {
+        openDayDrawer(d, dayItems);
+        return;
+      }
+      state.calAnchor = d;
+      state.calMode = 'week';
+      render();
     });
   });
 }
 
-function openDrawer(client) {
-  renderDrawer(client);
+function openDayDrawer(date, items) {
+  $('#drawer-header').innerHTML = `
+    <h2>${formatRuDate(date)}</h2>
+    <p style="margin:8px 0 0;color:var(--text-muted);font-size:0.85rem">${items.length} событий</p>
+  `;
+  $('#drawer-body').innerHTML = `<ul class="list">${items.map((e) => renderEventListItem(e)).join('')}</ul>`;
+  showDrawer();
+  $$('#drawer-body [data-event-id]').forEach((el) => {
+    el.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      const item = findEventById(el.dataset.eventId);
+      if (item) openEventDrawer(item);
+    });
+  });
+}
+
+function showDrawer() {
   $('#overlay').hidden = false;
   requestAnimationFrame(() => $('#overlay').classList.add('is-visible'));
   $('#drawer').classList.add('is-open');
   $('#drawer').setAttribute('aria-hidden', 'false');
+}
+
+function openClientDrawer(client) {
+  renderDrawer(client);
+  showDrawer();
+}
+
+function openEventDrawer(item) {
+  renderEventDrawer(item);
+  showDrawer();
+}
+
+function openDrawer(client) {
+  openClientDrawer(client);
 }
 
 function closeDrawer() {
