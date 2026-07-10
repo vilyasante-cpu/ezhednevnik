@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Ежедневник — единый обзор задач и встреч по всем проектам CURSOR">
+  <title>Ежедневник</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app" id="app">
+    <aside class="sidebar" aria-label="Навигация">
+      <div class="sidebar__brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div>
+          <p class="brand-title">Ежедневник</p>
+          <p class="brand-sub">CURSOR · read-only</p>
+        </div>
+      </div>
+
+      <nav class="sidebar__nav" id="nav">
+        <button class="nav-item is-active" data-view="today">
+          <span class="nav-icon" aria-hidden="true">◉</span>
+          Сегодня
+        </button>
+        <button class="nav-item" data-view="calendar">
+          <span class="nav-icon" aria-hidden="true">▦</span>
+          Календарь
+        </button>
+        <button class="nav-item" data-view="projects">
+          <span class="nav-icon" aria-hidden="true">◎</span>
+          Проекты
+        </button>
+        <button class="nav-item" data-view="notes">
+          <span class="nav-icon" aria-hidden="true">✎</span>
+          Заметки
+        </button>
+      </nav>
+
+      <div class="sidebar__stats" id="sidebar-stats"></div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div class="topbar__left">
+          <button class="menu-toggle" id="menu-toggle" aria-label="Меню">☰</button>
+          <div>
+            <h1 class="page-title" id="page-title">Сегодня</h1>
+            <p class="page-date" id="page-date"></p>
+          </div>
+        </div>
+        <div class="topbar__right">
+          <label class="search" aria-label="Поиск">
+            <span class="search-icon" aria-hidden="true">⌕</span>
+            <input type="search" id="search" placeholder="Клиент, задача, встреча…" autocomplete="off">
+          </label>
+          <p class="sync-time" id="sync-time"></p>
+        </div>
+      </header>
+
+      <main class="content" id="content">
+        <div class="loader" id="loader">
+          <div class="loader__orb"></div>
+          <p>Загружаем планы…</p>
+        </div>
+      </main>
+    </div>
+
+    <nav class="bottom-nav" id="bottom-nav" aria-label="Мобильная навигация">
+      <button class="bottom-nav__item is-active" data-view="today">Сегодня</button>
+      <button class="bottom-nav__item" data-view="calendar">Календарь</button>
+      <button class="bottom-nav__item" data-view="projects">Проекты</button>
+      <button class="bottom-nav__item" data-view="notes">Заметки</button>
+    </nav>
+
+    <div class="overlay" id="overlay" hidden></div>
+    <aside class="drawer" id="drawer" aria-hidden="true">
+      <header class="drawer__header">
+        <button class="drawer__close" id="drawer-close" aria-label="Закрыть">×</button>
+        <div id="drawer-header"></div>
+      </header>
+      <div class="drawer__body" id="drawer-body"></div>
+    </aside>
+  </div>
+
+  <script src="app.js" type="module"></script>
+</body>
+</html>

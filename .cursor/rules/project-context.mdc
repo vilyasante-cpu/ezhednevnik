@@ -1,0 +1,17 @@
+---
+description: Контекст проекта Ежедневник — MVP read-only дашборд по всем проектам CURSOR
+alwaysApply: true
+---
+
+# Ежедневник — контекст проекта
+
+- **Продукт:** read-only дашборд задач, встреч, клиентов из папки `CURSOR`
+- **Источник правды:** markdown (`BACKLOG.md`, `КАЛЕНДАРЬ.md`) в дочерних проектах
+- **Изменения данных:** только через чаты Cursor, не через веб-UI
+- **Корень данных:** `c:\Users\pc\Desktop\Основная\CURSOR\`
+- **Субагенты:** см. `AGENTS.md` и `.cursor/skills/`
+
+При запросах о встречах/напоминаниях — skill `calendar-scheduler`.
+При запросах о UI — skill `design-ux`.
+При коде и деплое — skill `coder`.
+Для сводок и координации — skill `orchestrator`.
