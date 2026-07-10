@@ -17,7 +17,7 @@
 
 - [PROJECT.md](PROJECT.md) — видение, архитектура, облако
 - [AGENTS.md](AGENTS.md) — роли субагентов
-- [docs/MVP-ROADMAP.md](docs/MVP-ROADMAP.md) — план этапов
+- [docs/MVP-ROADMAP.md](documentation/MVP-ROADMAP.md) — план этапов
 
 ## Субагенты (Cursor skills)
 
@@ -32,7 +32,12 @@
 
 ## GitHub
 
-Репозиторий: **https://github.com/vilyasante-cpu/ezhednevnik** (приватный)
+Репозиторий: **https://github.com/vilyasante-cpu/ezhednevnik**
+
+Сайт (Pages): **https://vilyasante-cpu.github.io/ezhednevnik/**
+
+Деплой: **Deploy from a branch** → `main` → папка `/docs`  
+Папка `docs/` — зеркало `web/`, обновляется при каждом sync.
 
 ## Автосинхронизация
 

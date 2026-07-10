@@ -28,9 +28,9 @@
 
 ## Этап 3 — Облако
 
-- [ ] Git-репозиторий для Ежедневника
-- [ ] GitHub Actions: sync + deploy на Pages/Vercel
-- [ ] HTTPS URL для доступа из любой точки
+- [x] Git-репозиторий для Ежедневника
+- [x] GitHub Pages: deploy from branch `main` / `docs`
+- [x] HTTPS URL для доступа из любой точки
 
 ## Этап 4 — Улучшения
 

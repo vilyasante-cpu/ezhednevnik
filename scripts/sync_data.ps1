@@ -131,4 +131,13 @@ $webDir = Split-Path $WebOutput -Parent
 if (-not (Test-Path $webDir)) { New-Item -ItemType Directory -Path $webDir -Force | Out-Null }
 [System.IO.File]::WriteAllText($WebOutput, $json, [System.Text.UTF8Encoding]::new($false))
 
-Write-Host ("OK: " + $Output + " + web/data | clients=" + $clients.Count + " tasks=" + $allTasks.Count)
+# Mirror web -> docs (GitHub Pages: deploy from branch /docs)
+$RepoRoot = Split-Path $PSScriptRoot -Parent
+$WebFolder = Join-Path $RepoRoot "web"
+$DocsFolder = Join-Path $RepoRoot "docs"
+if (Test-Path $WebFolder) {
+    if (Test-Path $DocsFolder) { Remove-Item $DocsFolder -Recurse -Force }
+    Copy-Item $WebFolder $DocsFolder -Recurse
+}
+
+Write-Host ("OK: " + $Output + " + web/data + docs | clients=" + $clients.Count + " tasks=" + $allTasks.Count)
