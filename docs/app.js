@@ -63,6 +63,113 @@ function addDays(d, n) {
   return x;
 }
 
+function getNextWeekRange(fromDate = new Date()) {
+  const today = startOfDay(fromDate);
+  const nextWeekStart = addDays(startOfWeek(today), 7);
+  const nextWeekEnd = addDays(nextWeekStart, 6);
+  return { start: nextWeekStart, end: nextWeekEnd };
+}
+
+function isInDateRange(date, start, end) {
+  const d = startOfDay(date);
+  return d >= startOfDay(start) && d <= startOfDay(end);
+}
+
+function formatWeekRange(start, end) {
+  const sameMonth = start.getMonth() === end.getMonth();
+  if (sameMonth) {
+    return `${start.getDate()}–${end.getDate()} ${MONTHS[end.getMonth()]}`;
+  }
+  return `${start.getDate()} ${MONTHS[start.getMonth()]} – ${end.getDate()} ${MONTHS[end.getMonth()]}`;
+}
+
+function getNextWeekMeetings(data, q) {
+  const { start, end } = getNextWeekRange(new Date());
+  return filterBySearch(
+    data.events
+      .map((e) => ({ ...e, _d: parseRuDate(e.date) }))
+      .filter((e) => e._d && isInDateRange(e._d, start, end))
+      .sort((a, b) => a._d - b._d || (a.time || '').localeCompare(b.time || '')),
+    q,
+    ['client', 'title', 'type']
+  );
+}
+
+function renderMeetingCard(e) {
+  const closed = isEventClosed(e);
+  const title = eventTitle(e);
+  const day = parseRuDate(e.date);
+  const domainCls = e.domain?.toLowerCase() === 'provance' ? 'meeting-card--provance' : 'meeting-card--3d';
+  return `
+    <article class="meeting-card ${domainCls} ${closed ? 'is-closed' : ''}" data-event-id="${esc(e.id)}" role="button" tabindex="0">
+      <div class="meeting-card__time">${e.time ? esc(e.time) : 'весь день'}</div>
+      <div class="meeting-card__body">
+        <p class="meeting-card__title">${esc(title)}</p>
+        <div class="meeting-card__meta">
+          <span>${esc(e.client)}</span>
+          ${closed ? '<span class="badge badge--low">Выполнено</span>' : `<span>${esc(e.type || 'Встреча')}</span>`}
+        </div>
+      </div>
+      <div class="meeting-card__date">${day ? `${DOW[day.getDay()]}, ${day.getDate()} ${MONTHS[day.getMonth()]}` : esc(e.date)}</div>
+    </article>`;
+}
+
+function renderNextWeekMeetingsBlock(meetings, range) {
+  const rangeLabel = formatWeekRange(range.start, range.end);
+
+  if (!meetings.length) {
+    return `
+      <div class="card card--week-meetings">
+        <div class="card__header">
+          <div>
+            <h2 class="card__title">Встречи на следующую неделю</h2>
+            <p class="card__subtitle">${rangeLabel}</p>
+          </div>
+          <span class="badge badge--lavender">0</span>
+        </div>
+        <div class="week-meetings week-meetings--empty">
+          <p>На следующую неделю встреч не запланировано</p>
+        </div>
+      </div>`;
+  }
+
+  const byDay = {};
+  meetings.forEach((e) => {
+    const key = e.date;
+    (byDay[key] = byDay[key] || []).push(e);
+  });
+
+  const dayGroups = Object.keys(byDay)
+    .sort((a, b) => (parseRuDate(a) || 0) - (parseRuDate(b) || 0))
+    .map((dateKey) => {
+      const d = parseRuDate(dateKey);
+      const label = d
+        ? `${DOW_FULL[d.getDay()]}, ${d.getDate()} ${MONTHS[d.getMonth()]}`
+        : dateKey;
+      return `
+        <section class="week-meetings__day">
+          <h3 class="week-meetings__day-title">${esc(label)}</h3>
+          <div class="week-meetings__list">
+            ${byDay[dateKey].map(renderMeetingCard).join('')}
+          </div>
+        </section>`;
+    }).join('');
+
+  return `
+    <div class="card card--week-meetings">
+      <div class="card__header">
+        <div>
+          <h2 class="card__title">Встречи на следующую неделю</h2>
+          <p class="card__subtitle">${rangeLabel}</p>
+        </div>
+        <span class="badge badge--lavender">${meetings.length}</span>
+      </div>
+      <div class="week-meetings">
+        ${dayGroups}
+      </div>
+    </div>`;
+}
+
 function startOfWeek(d) {
   const x = startOfDay(d);
   const day = x.getDay();
@@ -121,6 +228,7 @@ function normalizeData(raw) {
     contacts: c.contacts || {},
     project_status: c.project_status || c.status || null,
     deal_stage: c.deal_stage || null,
+    profile: c.profile || null,
     status: c.project_status || c.status || null,
     path: c.path || '',
     highCount: (c.tasks || []).filter((t) => /высок/i.test(t.priority)).length,
@@ -128,7 +236,7 @@ function normalizeData(raw) {
     doneCount: (c.tasks || []).filter((t) => /выполн|закрыт|готов/i.test(t.status)).length,
   }));
 
-  return { ...raw, events, deadlines, clients, isPublic: raw.privacy === 'public' };
+  return { ...raw, events, deadlines, clients, isPublic: raw.privacy === 'public', hasFullProfiles: !!raw.has_full_profiles };
 }
 
 function allTasks(data) {
@@ -297,10 +405,8 @@ function renderToday(data) {
     q, ['client', 'title']
   ).slice(0, 8);
 
-  const highTasks = filterBySearch(
-    allTasks(data).filter((t) => /высок/i.test(t.priority) && !/выполн|закрыт|готов/i.test(t.status)),
-    q, ['title', 'clientName', 'id']
-  ).slice(0, 12);
+  const nextWeekRange = getNextWeekRange(today);
+  const nextWeekMeetings = getNextWeekMeetings(data, q);
 
   const overdue = filterBySearch(
     data.deadlines.filter((d) => /просроч/i.test(d.status)),
@@ -321,8 +427,8 @@ function renderToday(data) {
           <div class="stat-pill__label">в работе</div>
         </div>
         <div class="stat-pill stat-pill--sky">
-          <div class="stat-pill__value">${upcomingEvents.length}</div>
-          <div class="stat-pill__label">предстоящих</div>
+          <div class="stat-pill__value">${nextWeekMeetings.length}</div>
+          <div class="stat-pill__label">на след. неделе</div>
         </div>
         <div class="stat-pill stat-pill--peach">
           <div class="stat-pill__value">${overdue.length}</div>
@@ -361,18 +467,7 @@ function renderToday(data) {
         </div>
 
         <div class="stack">
-          <div class="card">
-            <div class="card__header">
-              <h2 class="card__title">Приоритетные задачи</h2>
-            </div>
-            <div class="card__body--flush">
-              <ul class="list" id="priority-list">
-                ${highTasks.length
-                  ? highTasks.map((t) => renderTaskItem(t)).join('')
-                  : '<li class="empty">Нет задач с высоким приоритетом</li>'}
-              </ul>
-            </div>
-          </div>
+          ${renderNextWeekMeetingsBlock(nextWeekMeetings, nextWeekRange)}
 
           ${overdue.length ? `
           <div class="card">
@@ -623,10 +718,10 @@ function renderEventDrawer(item) {
     </div>
     ${canClose ? `
     <div class="drawer__section">
-      <button type="button" class="btn-close-event" id="btn-close-event" ${state.closingEvent ? 'disabled' : ''}>
-        ${state.closingEvent ? 'Закрываем…' : 'Закрыть событие'}
+      <button type="button" class="btn-done-event" id="btn-done-event" ${state.closingEvent ? 'disabled' : ''}>
+        ${state.closingEvent ? 'Сохраняем…' : 'Выполнено'}
       </button>
-      <p class="drawer__hint">Запишется в КАЛЕНДАРЬ.md и при следующей синхронизации отобразится зачёркнутым.</p>
+      <p class="drawer__hint">Локально: закроет событие в КАЛЕНДАРЬ.md и зачеркнёт после синхронизации.</p>
     </div>` : ''}
     ${!state.writable && !closed && !state.data?.isPublic ? `
     <div class="drawer__section">
@@ -641,16 +736,143 @@ function renderEventDrawer(item) {
   `;
 
   $('#drawer-open-client')?.addEventListener('click', () => openClientDrawer(client));
-  $('#btn-close-event')?.addEventListener('click', () => closeEvent(item));
+  $('#btn-done-event')?.addEventListener('click', () => closeEvent(item));
 }
 
-function renderDrawer(client) {
-  if (!client) return;
+function isLocalHost() {
+  const h = location.hostname;
+  return h === 'localhost' || h === '127.0.0.1';
+}
 
+function renderInlineText(text) {
+  if (!text) return '';
+  return esc(text)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>');
+}
+
+function renderProfileText(text) {
+  return text.split('\n').map((line) => {
+    const t = line.trim();
+    if (!t) return '';
+    if (t.startsWith('### ')) {
+      return `<h4 class="profile-text__sub">${renderInlineText(t.slice(4))}</h4>`;
+    }
+    if (t.startsWith('- ')) {
+      return `<p class="profile-text__bullet">${renderInlineText(t)}</p>`;
+    }
+    return `<p class="profile-text__p">${renderInlineText(t)}</p>`;
+  }).join('');
+}
+
+function renderProfileBlock(block) {
+  if (!block) return '';
+  switch (block.kind) {
+    case 'key_value':
+      return `
+        <dl class="profile-kv">
+          ${(block.rows || []).map((row) => `
+            <div class="profile-kv__row">
+              <dt>${esc(row[0])}</dt>
+              <dd>${renderInlineText(row[1])}</dd>
+            </div>`).join('')}
+        </dl>`;
+    case 'table':
+      return `
+        <div class="table-wrap profile-table-wrap">
+          <table class="profile-table">
+            <thead><tr>${(block.headers || []).map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead>
+            <tbody>
+              ${(block.rows || []).map((row) => `
+                <tr>${row.map((cell) => `<td>${renderInlineText(cell)}</td>`).join('')}</tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>`;
+    case 'checklist':
+      return `
+        <ul class="profile-checklist">
+          ${(block.items || []).map((item) => `
+            <li><span class="profile-checklist__box" aria-hidden="true"></span>${renderInlineText(item)}</li>
+          `).join('')}
+        </ul>`;
+    case 'code':
+      return `<pre class="profile-code">${esc(block.text || '')}</pre>`;
+    case 'text':
+    default:
+      return `<div class="profile-text">${renderProfileText(block.text || '')}</div>`;
+  }
+}
+
+function renderFullClientDrawer(client) {
+  const profile = client.profile || {};
+  const sections = profile.sections || [];
+  const tasks = client.tasks || [];
+
+  $('#drawer-header').innerHTML = `
+    <div class="client-hero">
+      <p class="client-hero__eyebrow">${esc(client.domain || '3D')} · полная карточка</p>
+      <h2>${esc(client.name)}</h2>
+      <div class="client-hero__badges">
+        ${domainBadge(client.domain)}
+        ${client.project_status ? `<span class="badge ${statusBadgeClass(client.project_status)}">${esc(client.project_status)}</span>` : ''}
+        ${client.deal_stage ? `<span class="badge badge--event">${esc(client.deal_stage)}</span>` : ''}
+      </div>
+      ${profile.updated_note ? `<p class="client-hero__note">${renderInlineText(profile.updated_note)}</p>` : ''}
+    </div>
+  `;
+
+  $('#drawer-body').innerHTML = `
+    <div class="client-profile">
+      ${sections.map((sec) => `
+        <section class="profile-section">
+          <h3 class="profile-section__title">${esc(sec.title)}</h3>
+          <div class="profile-section__body">
+            ${(sec.blocks || []).map(renderProfileBlock).join('')}
+          </div>
+        </section>
+      `).join('')}
+      <section class="profile-section profile-section--tasks">
+        <h3 class="profile-section__title">Задачи (${tasks.length})</h3>
+        <div class="profile-section__body">
+          ${tasks.length ? `
+            <div class="table-wrap">
+              <table class="profile-table">
+                <thead>
+                  <tr><th>ID</th><th>Задача</th><th>Приоритет</th><th>Статус</th><th>Срок</th><th>Ответственный</th></tr>
+                </thead>
+                <tbody>
+                  ${tasks.map((t) => `
+                    <tr>
+                      <td>${esc(t.id)}</td>
+                      <td>${esc(t.title)}</td>
+                      <td>${priorityBadge(t.priority)}</td>
+                      <td>${esc(t.status)}</td>
+                      <td>${esc(t.due || '—')}</td>
+                      <td>${esc(t.assignee || '—')}</td>
+                    </tr>`).join('')}
+                </tbody>
+              </table>
+            </div>` : '<p class="empty">Задач нет</p>'}
+        </div>
+      </section>
+      ${client.path ? `
+      <section class="profile-section profile-section--meta">
+        <h3 class="profile-section__title">Источник</h3>
+        <div class="profile-section__body">
+          <div class="drawer__path">${esc(client.path)}</div>
+        </div>
+      </section>` : ''}
+    </div>
+  `;
+}
+
+function renderBasicClientDrawer(client) {
   const tasks = client.tasks || [];
   const contacts = client.contacts || {};
+  const hidePhone = state.data?.isPublic;
   const contactRows = Object.entries(contacts)
-    .filter(([k]) => k !== 'Телефон')
+    .filter(([k]) => hidePhone ? k !== 'Телефон' : true)
     .map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`)
     .join('');
 
@@ -661,6 +883,7 @@ function renderDrawer(client) {
       ${client.project_status ? `<span class="badge ${statusBadgeClass(client.project_status)}">${esc(client.project_status)}</span>` : ''}
       ${client.deal_stage ? `<span class="badge badge--event">${esc(client.deal_stage)}</span>` : ''}
     </div>
+    ${state.data?.isPublic ? '<p class="drawer__hint drawer__hint--top">Краткая карточка. Полные справки и вводные — в локальной версии.</p>' : ''}
   `;
 
   $('#drawer-body').innerHTML = `
@@ -697,6 +920,15 @@ function renderDrawer(client) {
       <div class="drawer__path">${esc(client.path)}</div>
     </div>` : ''}
   `;
+}
+
+function renderDrawer(client) {
+  if (!client) return;
+  if (client.profile?.sections?.length && state.data?.hasFullProfiles) {
+    renderFullClientDrawer(client);
+  } else {
+    renderBasicClientDrawer(client);
+  }
 }
 
 /* ── App shell ── */
@@ -927,6 +1159,8 @@ function showDrawer() {
 
 function openClientDrawer(client) {
   renderDrawer(client);
+  const wide = !!(client?.profile?.sections?.length && state.data?.hasFullProfiles);
+  $('#drawer').classList.toggle('drawer--wide', wide);
   showDrawer();
 }
 
@@ -941,7 +1175,7 @@ function openDrawer(client) {
 
 function closeDrawer() {
   $('#overlay').classList.remove('is-visible');
-  $('#drawer').classList.remove('is-open');
+  $('#drawer').classList.remove('is-open', 'drawer--wide');
   $('#drawer').setAttribute('aria-hidden', 'true');
   setTimeout(() => { $('#overlay').hidden = true; }, 350);
 }
@@ -989,7 +1223,7 @@ async function closeEvent(item) {
     const payload = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(payload.error || `HTTP ${res.status}`);
 
-    state.data = await loadData();
+    state.data = await loadData(state.writable || isLocalHost());
     renderSidebarStats(state.data);
     render();
 
@@ -1004,13 +1238,20 @@ async function closeEvent(item) {
   }
 }
 
-async function loadData() {
-  const paths = [
-    'data/planner.json',
-    '../data/planner.json',
-    'data/planner.local.json',
-    '../data/planner.local.json',
-  ];
+async function loadData(preferFull = false) {
+  const paths = preferFull
+    ? [
+      'data/planner.local.json',
+      '../data/planner.local.json',
+      'data/planner.json',
+      '../data/planner.json',
+    ]
+    : [
+      'data/planner.json',
+      '../data/planner.json',
+      'data/planner.local.json',
+      '../data/planner.local.json',
+    ];
   let lastErr;
 
   for (const path of paths) {
@@ -1033,17 +1274,21 @@ async function init() {
 
   try {
     state.writable = await checkWritable();
-    state.data = await loadData();
+    state.data = await loadData(state.writable || isLocalHost());
     const brandSub = document.querySelector('.brand-sub');
     if (brandSub) {
-      brandSub.textContent = state.writable
+      brandSub.textContent = state.data.hasFullProfiles
+        ? 'CURSOR · полные карточки'
+        : state.writable
         ? 'CURSOR · локальная запись'
         : (state.data.isPublic ? 'CURSOR · публичный снимок' : 'CURSOR · только чтение');
     }
-    if (state.data.isPublic) {
+    if (state.data.isPublic || state.data.hasFullProfiles) {
       const banner = document.createElement('p');
       banner.className = 'privacy-banner';
-      banner.textContent = 'Единый снимок с GitHub: те же клиенты, задачи и календарь. Телефоны и суммы скрыты.';
+      banner.textContent = state.data.hasFullProfiles
+        ? 'Локальная версия: полные карточки клиентов из BACKLOG.md (телефоны, суммы, справки).'
+        : 'Единый снимок с GitHub: те же клиенты, задачи и календарь. Телефоны и суммы скрыты.';
       document.querySelector('.content')?.prepend(banner);
     }
     renderSidebarStats(state.data);

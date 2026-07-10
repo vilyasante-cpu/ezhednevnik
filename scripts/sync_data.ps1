@@ -14,65 +14,7 @@ function Get-Domain([string]$Path) {
     return ($rel -split '[\\/]')[0]
 }
 
-function Get-Cells([string]$Line) {
-    if (-not $Line.StartsWith('|')) { return $null }
-    if ($Line -match '^\|[\s\-:|]+\|$') { return $null }
-    return @(($Line -split '\|')[1..($Line.Split('|').Count - 2)] | ForEach-Object { $_.Trim().Trim('*') })
-}
-
-function Parse-Backlog([string]$Path) {
-    $lines = [System.IO.File]::ReadAllLines($Path, [System.Text.Encoding]::UTF8)
-    $name = Split-Path (Split-Path $Path -Parent) -Leaf
-    $tasks = [System.Collections.ArrayList]@()
-    $contacts = @{}
-    $projectStatus = $null
-    $dealStage = $null
-    $inBacklog = $false
-    $section = ''
-    $hdrProjectStatus = [string][char]0x0421 + [char]0x0442 + [char]0x0430 + [char]0x0442 + [char]0x0443 + [char]0x0441 + ' ' + [char]0x043f + [char]0x0440 + [char]0x043e + [char]0x0435 + [char]0x043a + [char]0x0442 + [char]0x0430
-    $kOrg = [string][char]0x041e + [char]0x0440 + [char]0x0433 + [char]0x0430 + [char]0x043d + [char]0x0438 + [char]0x0437 + [char]0x0430 + [char]0x0446 + [char]0x0438 + [char]0x044f
-    $kContact = [string][char]0x041a + [char]0x043e + [char]0x043d + [char]0x0442 + [char]0x0430 + [char]0x043a + [char]0x0442
-    $kPhone = [string][char]0x0422 + [char]0x0435 + [char]0x043b + [char]0x0435 + [char]0x0444 + [char]0x043e + [char]0x043d
-    $kCity = [string][char]0x0413 + [char]0x043e + [char]0x0440 + [char]0x043e + [char]0x0434
-    $kType = [string][char]0x0422 + [char]0x0438 + [char]0x043f
-    $kStage = [string][char]0x042d + [char]0x0442 + [char]0x0430 + [char]0x043f
-    $kStatus = [string][char]0x0421 + [char]0x0442 + [char]0x0430 + [char]0x0442 + [char]0x0443 + [char]0x0441
-
-    foreach ($line in $lines) {
-        $t = $line.Trim()
-        if ($t -match '^## ') {
-            $section = $t.Substring(3).Trim()
-            if ($t -eq '## Backlog') { $inBacklog = $true } else { $inBacklog = $false }
-            continue
-        }
-        $cells = Get-Cells $t
-        if ($cells -and $cells.Count -ge 2) {
-            if ($section -eq $hdrProjectStatus -and $cells[0] -eq $kStatus) {
-                $projectStatus = $cells[1]
-            }
-            if ($cells[0] -eq $kStage) { $dealStage = $cells[1] }
-            if ($cells[0] -in @($kOrg, $kContact, $kPhone, $kCity, $kType)) {
-                $contacts[$cells[0]] = $cells[1]
-            }
-        }
-        if ($inBacklog -and $cells -and $cells.Count -ge 5 -and $cells[0] -match '\d' -and $cells[0] -ne 'ID') {
-            [void]$tasks.Add(@{
-                id = $cells[0]; title = $cells[1]; priority = $cells[2]
-                status = $cells[3]; assignee = $(if ($cells.Count -gt 4) { $cells[4] } else { '' })
-            })
-        }
-    }
-
-    return @{
-        name = $name
-        path = $Path.Substring($CursorRoot.Length).TrimStart('\', '/')
-        domain = Get-Domain $Path
-        project_status = $projectStatus
-        deal_stage = $dealStage
-        contacts = $contacts
-        tasks = $tasks
-    }
-}
+. (Join-Path $PSScriptRoot 'backlog_lib.ps1')
 
 function Parse-Calendar([string]$Path) {
     $domain = Get-Domain $Path
@@ -139,7 +81,8 @@ Get-ChildItem -Path $CursorRoot -Recurse -Filter "BACKLOG.md" |
     Where-Object { $_.FullName -notmatch $DailyFolder } |
     ForEach-Object {
         $backlogFiles++
-        $c = Parse-Backlog $_.FullName
+        $c = Parse-Backlog $_.FullName $CursorRoot
+        $c.domain = Get-Domain $_.FullName
         [void]$clients.Add($c)
         $domains[$c.domain] = $true
     }
@@ -180,6 +123,7 @@ $syncReport = Build-SyncReport `
 $data = [ordered]@{
     generated_at = $syncReport.generated_at
     cursor_root = $CursorRoot
+    has_full_profiles = $true
     sync_report = $syncReport
     stats = [ordered]@{
         clients = $clients.Count
@@ -196,7 +140,7 @@ $outDir = Split-Path $Output -Parent
 if (-not (Test-Path $outDir)) { New-Item -ItemType Directory -Path $outDir -Force | Out-Null }
 
 $RepoRoot = Split-Path $PSScriptRoot -Parent
-$fullJson = $data | ConvertTo-Json -Depth 10
+$fullJson = $data | ConvertTo-Json -Depth 20
 
 # Full snapshot — local only (gitignored)
 $LocalOutput = Join-Path $outDir "planner.local.json"
