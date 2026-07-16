@@ -1,5 +1,5 @@
 {
-    "generated_at":  "2026-07-16T11:17:45.3522630Z",
+    "generated_at":  "2026-07-16T11:47:46.0752325Z",
     "privacy":  "public",
     "notice":  "Names and companies allowed. Phones, emails, amounts removed.",
     "stats":  {
@@ -1195,9 +1195,9 @@
                                              "client":  "PROVANCE",
                                              "type":  "Командировка",
                                              "title":  "Чебоксары — Йошкар-Ола",
-                                             "status":  "🔔 Запланировано",
-                                             "comment":  "День 1",
-                                             "closed":  false
+                                             "status":  "Выполнено",
+                                             "comment":  "Закрыто из Ежедневника 16.07.2026",
+                                             "closed":  true
                                          },
                                          {
                                              "key":  "9e587d095e8547e7",
@@ -1206,9 +1206,9 @@
                                              "client":  "PROVANCE",
                                              "type":  "Командировка",
                                              "title":  "Чебоксары — Йошкар-Ола",
-                                             "status":  "🔔 Запланировано",
-                                             "comment":  "День 2",
-                                             "closed":  false
+                                             "status":  "Выполнено",
+                                             "comment":  "Закрыто из Ежедневника 16.07.2026",
+                                             "closed":  true
                                          }
                                      ],
                           "deadlines":  [
