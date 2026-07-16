@@ -1,4 +1,5 @@
-# Close calendar event/deadline in source markdown by stable key
+# Close calendar event/deadline in source markdown by stable key.
+# Must NOT call exit — serve.ps1 invokes this in-process; exit would kill the HTTP server.
 param(
     [Parameter(Mandatory)][string]$Key,
     [string]$Outcome = ""
@@ -13,8 +14,7 @@ $DailyFolder = [string][char]0x0415 + [char]0x0436 + [char]0x0435 + [char]0x0434
 $CalendarName = [string][char]0x041A + [char]0x0410 + [char]0x041B + [char]0x0415 + [char]0x041D + [char]0x0414 + [char]0x0410 + [char]0x0420 + [char]0x042C + '.md'
 
 if (-not $Key) {
-    Write-Error "Key is required"
-    exit 1
+    throw "Key is required"
 }
 
 $calFiles = Get-ChildItem -Path $CursorRoot -Recurse -Filter $CalendarName |
@@ -25,10 +25,8 @@ foreach ($file in $calFiles) {
     $result = Close-EventInCalendarFile -Path $file.FullName -Key $Key -Domain $domain -Outcome $Outcome
     if ($result) {
         & (Join-Path $PSScriptRoot 'sync_data.ps1') | Out-Null
-        $result | ConvertTo-Json -Compress
-        exit 0
+        return $result
     }
 }
 
-Write-Error "Event not found for key: $Key"
-exit 1
+throw "Event not found for key: $Key"

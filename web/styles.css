@@ -918,23 +918,66 @@ input { border: none; outline: none; background: transparent; }
 }
 
 .month-cell {
-  aspect-ratio: 1;
-  min-height: 72px;
+  min-height: 96px;
   padding: 8px;
   border-radius: var(--radius-sm);
   background: var(--surface);
   border: 1px solid transparent;
   transition: background 0.2s var(--ease);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .month-cell:hover { background: var(--elevated); border-color: var(--border); }
 .month-cell.is-today { background: var(--lavender-soft); border-color: var(--lavender); }
 .month-cell.is-other { opacity: 0.35; }
+.month-cell.has-items { border-color: rgba(197, 184, 212, 0.45); }
 
 .month-cell__num {
   font-size: 0.82rem;
   font-weight: 600;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
+}
+
+.month-cell__items {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 0;
+}
+
+.month-chip {
+  font-size: 0.68rem;
+  line-height: 1.2;
+  padding: 2px 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.month-chip--event {
+  background: var(--lavender-soft);
+  color: #5f5270;
+}
+
+.month-chip--deadline {
+  background: rgba(154, 83, 72, 0.12);
+  color: #9a5348;
+}
+
+.month-chip--more {
+  background: transparent;
+  color: var(--text-muted);
+  padding-left: 2px;
+}
+
+.month-chip.is-closed {
+  text-decoration: line-through;
+  opacity: 0.65;
 }
 
 .month-cell__dots {

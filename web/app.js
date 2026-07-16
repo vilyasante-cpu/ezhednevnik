@@ -585,17 +585,35 @@ function renderCalendar(data) {
     <div class="month-grid">
       ${['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map((d) => `<div class="month-dow">${d}</div>`).join('')}
       ${cells.map(({ date, other }) => {
-        const evCount = data.events.filter((e) => { const d = parseRuDate(e.date); return d && sameDay(d, date); }).length;
-        const dlCount = data.deadlines.filter((d) => { const dt = parseRuDate(d.date); return dt && sameDay(dt, date); }).length;
-        const dots = [
-          ...Array(Math.min(evCount, 3)).fill('<span class="dot dot--event"></span>'),
-          ...Array(Math.min(dlCount, 2)).fill('<span class="dot dot--deadline"></span>'),
-        ].join('');
+        const dayEvents = data.events.filter((e) => {
+          const d = parseRuDate(e.date);
+          return d && sameDay(d, date);
+        });
+        const dayDeadlines = data.deadlines.filter((d) => {
+          const dt = parseRuDate(d.date);
+          return dt && sameDay(dt, date);
+        });
+        const items = [
+          ...dayEvents.map((e) => ({ ...e, _kind: 'event' })),
+          ...dayDeadlines.map((d) => ({ ...d, title: d.event, source: 'deadline', _kind: 'deadline' })),
+        ];
+        const maxShow = 3;
+        const shown = items.slice(0, maxShow);
+        const more = items.length - shown.length;
+        const chips = shown.map((item) => {
+          const closed = isEventClosed(item);
+          const label = item.client || eventTitle(item);
+          const cls = item._kind === 'deadline' ? 'month-chip--deadline' : 'month-chip--event';
+          return `<div class="month-chip ${cls} ${closed ? 'is-closed' : ''}" title="${esc(eventTitle(item))}">${esc(label)}</div>`;
+        }).join('');
         return `
-          <div class="month-cell ${sameDay(date, today) ? 'is-today' : ''} ${other ? 'is-other' : ''}"
+          <div class="month-cell ${sameDay(date, today) ? 'is-today' : ''} ${other ? 'is-other' : ''} ${items.length ? 'has-items' : ''}"
                data-date="${formatRuDate(date)}" role="button" tabindex="0">
             <div class="month-cell__num">${date.getDate()}</div>
-            <div class="month-cell__dots">${dots}</div>
+            <div class="month-cell__items">
+              ${chips}
+              ${more > 0 ? `<div class="month-chip month-chip--more">+${more}</div>` : ''}
+            </div>
           </div>`;
       }).join('')}
     </div>`;
@@ -728,20 +746,20 @@ function renderEventDrawer(item) {
           </div>`).join('')}
       </dl>
     </div>
-    ${canClose ? `
+    ${canClose && state.writable ? `
     <div class="drawer__section">
       <button type="button" class="btn-done-event" id="btn-done-event" ${state.closingEvent ? 'disabled' : ''}>
-        ${state.closingEvent ? 'Сохраняем…' : 'Выполнено'}
+        ${state.closingEvent ? 'Сохраняем…' : 'Завершить'}
       </button>
-      <p class="drawer__hint">Локально: закроет событие в КАЛЕНДАРЬ.md и зачеркнёт после синхронизации.</p>
+      <p class="drawer__hint">Закроет событие в КАЛЕНДАРЬ.md и зачеркнёт после синхронизации.</p>
     </div>` : ''}
-    ${!canClose && !closed && isLocalHost() && !item.key ? `
+    ${!closed && isLocalHost() && !item.key ? `
     <div class="drawer__section">
       <p class="drawer__hint">У события нет ключа — выполните <code>scripts/sync_data.ps1</code> и обновите страницу.</p>
     </div>` : ''}
-    ${!canClose && !closed && isLocalHost() && item.key && !state.writable ? `
+    ${!closed && isLocalHost() && item.key && !state.writable ? `
     <div class="drawer__section">
-      <p class="drawer__hint">Для записи в календарь запустите <code>scripts/serve.ps1</code> (не простой static server).</p>
+      <p class="drawer__hint">Для кнопки «Завершить» запустите <code>scripts/serve.ps1</code> (не простой static server).</p>
     </div>` : ''}
     ${client ? `
     <div class="drawer__section">
@@ -773,7 +791,7 @@ function detectPublicMode(raw = {}) {
 }
 
 function canCloseEvent(item) {
-  return (state.writable || isLocalHost()) && !isEventClosed(item) && !!item.key;
+  return !!state.writable && !isEventClosed(item) && !!item.key;
 }
 
 function normalizeKvItems(block) {
@@ -1321,7 +1339,7 @@ async function closeEvent(item) {
     const payload = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(payload.error || `HTTP ${res.status}`);
 
-    state.data = await loadData(state.writable || isLocalHost());
+    state.data = await loadData(true);
     renderSidebarStats(state.data);
     render();
 
@@ -1330,9 +1348,12 @@ async function closeEvent(item) {
     else closeDrawer();
   } catch (e) {
     alert(`Не удалось закрыть событие: ${e.message || e}`);
-    renderEventDrawer(item);
   } finally {
     state.closingEvent = false;
+    if (state.drawerEvent?.key === item.key || state.drawerEvent?.id === item.id) {
+      const updated = findEventByKey(item.key) || item;
+      renderEventDrawer(updated);
+    }
   }
 }
 
