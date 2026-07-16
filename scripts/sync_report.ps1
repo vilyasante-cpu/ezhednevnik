@@ -15,7 +15,7 @@ function Get-SnapshotMetrics([object]$Clients, [object]$Calendars) {
         foreach ($d in @($cal.deadlines)) {
             $deadlines++
             if ($d.closed) { $closedDeadlines++ }
-            if ($d.status -match '(?i)prosroch|\u043f\u0440\u043e\u0441\u0440\u043e\u0447') { $overdue++ }
+            if (-not $d.closed -and $d.date -notmatch '~' -and $d.status -match '(?i)prosroch|\u043f\u0440\u043e\u0441\u0440\u043e\u0447') { $overdue++ }
         }
     }
 
@@ -55,7 +55,7 @@ function Get-MetricsFromPlanner([object]$Planner) {
         foreach ($d in @($cal.deadlines)) {
             $deadlines++
             if ($d.closed) { $closedDeadlines++ }
-            if ($d.status -match '(?i)prosroch|\u043f\u0440\u043e\u0441\u0440\u043e\u0447') { $overdue++ }
+            if (-not $d.closed -and $d.date -notmatch '~' -and $d.status -match '(?i)prosroch|\u043f\u0440\u043e\u0441\u0440\u043e\u0447') { $overdue++ }
         }
     }
     foreach ($c in @($Planner.clients)) {

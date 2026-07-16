@@ -349,7 +349,18 @@ function findEventByKey(key) {
 function isEventClosed(item) {
   if (!item) return false;
   if (item.closed) return true;
-  return /выполн|закрыт/i.test(item.status || '');
+  return /выполн|закрыт|снят|отмен/i.test(item.status || '');
+}
+
+/** Real overdue only: open deadline, exact date, status or past date — no ~approx marks. */
+function isRealOverdueDeadline(d) {
+  if (!d || isEventClosed(d)) return false;
+  const dateStr = String(d.date || '');
+  if (!dateStr || dateStr.includes('~') || dateStr.includes('ГГГГ')) return false;
+  if (/просроч/i.test(d.status || '')) return true;
+  const dt = parseRuDate(dateStr);
+  if (!dt) return false;
+  return startOfDay(dt) < startOfDay(new Date());
 }
 
 function findClientByName(name) {
@@ -419,7 +430,7 @@ function renderToday(data) {
   const nextWeekMeetings = getNextWeekMeetings(data, q);
 
   const overdue = filterBySearch(
-    data.deadlines.filter((d) => /просроч/i.test(d.status)),
+    data.deadlines.filter((d) => isRealOverdueDeadline(d)),
     q, ['client', 'event']
   );
 

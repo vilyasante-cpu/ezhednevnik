@@ -103,7 +103,7 @@ foreach ($cal in $publicCalendars) {
     foreach ($d in @($cal.deadlines)) {
         $deadlineCount++
         if ($d.closed) { $closedDeadlines++ }
-        if ($d.status -match '(?i)prosroch|\u043f\u0440\u043e\u0441\u0440\u043e\u0447') { $overdue++ }
+        if (-not $d.closed -and $d.date -notmatch '~' -and $d.status -match '(?i)prosroch|\u043f\u0440\u043e\u0441\u0440\u043e\u0447') { $overdue++ }
     }
 }
 foreach ($c in $publicClients) {

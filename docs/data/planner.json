@@ -1,13 +1,13 @@
 {
-    "generated_at":  "2026-07-16T11:47:46.0752325Z",
+    "generated_at":  "2026-07-16T12:05:50.1994984Z",
     "privacy":  "public",
     "notice":  "Names and companies allowed. Phones, emails, amounts removed.",
     "stats":  {
                   "clients":  25,
                   "tasks":  97,
                   "upcoming_events":  3,
-                  "deadlines":  6,
-                  "overdue_deadlines":  2
+                  "deadlines":  4,
+                  "overdue_deadlines":  0
               },
     "domains":  [
                     "3D",
@@ -1155,24 +1155,6 @@
                                                 "status":  "Выполнено",
                                                 "comment":  "",
                                                 "closed":  true
-                                            },
-                                            {
-                                                "key":  "5e80877625535d0a",
-                                                "date":  "~18.03.2026",
-                                                "client":  "Сура, Реханна",
-                                                "event":  "Истечение срока КП (30 дней)",
-                                                "status":  "Просрочено",
-                                                "comment":  "Требуется актуализация КП или фиксация новых условий",
-                                                "closed":  false
-                                            },
-                                            {
-                                                "key":  "eb22fb0a27457e63",
-                                                "date":  "~31.03.2026",
-                                                "client":  "BOXX",
-                                                "event":  "Истечение срока КП («до марта 2026»)",
-                                                "status":  "Просрочено",
-                                                "comment":  "Связаться с Жанной, обновить КП",
-                                                "closed":  false
                                             },
                                             {
                                                 "key":  "961ad9a7474f3c60",
