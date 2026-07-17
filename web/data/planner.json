@@ -1,11 +1,11 @@
 {
-    "generated_at":  "2026-07-17T06:17:45.1969298Z",
+    "generated_at":  "2026-07-17T06:50:06.5607528Z",
     "privacy":  "public",
     "notice":  "Names and companies allowed. Phones, emails, amounts removed.",
     "stats":  {
                   "clients":  25,
                   "tasks":  97,
-                  "upcoming_events":  7,
+                  "upcoming_events":  11,
                   "deadlines":  4,
                   "overdue_deadlines":  0
               },
@@ -1170,6 +1170,50 @@
                       {
                           "domain":  "PROVANCE",
                           "events":  [
+                                         {
+                                             "key":  "c7dc1bd362e33edc",
+                                             "date":  "17.07.2026",
+                                             "time":  "10:00",
+                                             "client":  "Ягубова Айла",
+                                             "type":  "Встреча / телемост",
+                                             "title":  "Собеседование (закупщик)",
+                                             "status":  "🔔 Запланировано",
+                                             "comment":  "Подбор персонала",
+                                             "closed":  false
+                                         },
+                                         {
+                                             "key":  "e177b599a72d8aac",
+                                             "date":  "17.07.2026",
+                                             "time":  "10:30",
+                                             "client":  "Дементьева Ольга",
+                                             "type":  "Встреча / телемост",
+                                             "title":  "Собеседование (закупщик)",
+                                             "status":  "🔔 Запланировано",
+                                             "comment":  "Подбор персонала",
+                                             "closed":  false
+                                         },
+                                         {
+                                             "key":  "584fff0486fd3f4f",
+                                             "date":  "17.07.2026",
+                                             "time":  "11:00",
+                                             "client":  "Журова Елена",
+                                             "type":  "Встреча / телемост",
+                                             "title":  "Собеседование (закупщик)",
+                                             "status":  "🔔 Запланировано",
+                                             "comment":  "Подбор персонала",
+                                             "closed":  false
+                                         },
+                                         {
+                                             "key":  "0a09b66abf8700bf",
+                                             "date":  "17.07.2026",
+                                             "time":  "12:30",
+                                             "client":  "Суслонов Павел",
+                                             "type":  "Встреча / телемост",
+                                             "title":  "Собеседование (закупщик)",
+                                             "status":  "🔔 Запланировано",
+                                             "comment":  "Подбор персонала",
+                                             "closed":  false
+                                         },
                                          {
                                              "key":  "4419dcae5d40a6eb",
                                              "date":  "21.07.2026",
