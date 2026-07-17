@@ -1,5 +1,5 @@
 {
-    "generated_at":  "2026-07-17T08:17:45.0423850Z",
+    "generated_at":  "2026-07-17T08:47:45.0138233Z",
     "privacy":  "public",
     "notice":  "Names and companies allowed. Phones, emails, amounts removed.",
     "stats":  {
@@ -1210,9 +1210,9 @@
                                              "client":  "Суслонов Павел",
                                              "type":  "Встреча / телемост",
                                              "title":  "Собеседование (закупщик)",
-                                             "status":  "🔔 Запланировано",
-                                             "comment":  "Подбор персонала",
-                                             "closed":  false
+                                             "status":  "Не состоялось",
+                                             "comment":  "Не вышел на связь 17.07.2026",
+                                             "closed":  true
                                          },
                                          {
                                              "key":  "4419dcae5d40a6eb",
