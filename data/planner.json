@@ -1,5 +1,5 @@
 {
-    "generated_at":  "2026-07-17T07:17:45.2409339Z",
+    "generated_at":  "2026-07-17T07:47:45.1670196Z",
     "privacy":  "public",
     "notice":  "Names and companies allowed. Phones, emails, amounts removed.",
     "stats":  {
@@ -1177,9 +1177,9 @@
                                              "client":  "Ягубова Айла",
                                              "type":  "Встреча / телемост",
                                              "title":  "Собеседование (закупщик)",
-                                             "status":  "🔔 Запланировано",
-                                             "comment":  "Подбор персонала",
-                                             "closed":  false
+                                             "status":  "Выполнено",
+                                             "comment":  "Закрыто из Ежедневника 17.07.2026",
+                                             "closed":  true
                                          },
                                          {
                                              "key":  "e177b599a72d8aac",
