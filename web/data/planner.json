@@ -1,11 +1,11 @@
 {
-    "generated_at":  "2026-07-23T12:17:45.6910839Z",
+    "generated_at":  "2026-07-23T12:47:45.3911274Z",
     "privacy":  "public",
     "notice":  "Names and companies allowed. Phones, emails, amounts removed.",
     "stats":  {
                   "clients":  25,
                   "tasks":  98,
-                  "upcoming_events":  10,
+                  "upcoming_events":  14,
                   "deadlines":  4,
                   "overdue_deadlines":  0
               },
@@ -1221,6 +1221,50 @@
                                              "status":  "Выполнено",
                                              "comment":  "Закрыто из Ежедневника 22.07.2026",
                                              "closed":  true
+                                         },
+                                         {
+                                             "key":  "984c3c3fc582fe0a",
+                                             "date":  "24.07.2026",
+                                             "time":  "10:00",
+                                             "client":  "Долгова Анастасия",
+                                             "type":  "Встреча / телемост",
+                                             "title":  "Собеседование (менеджер направления Мебель)",
+                                             "status":  "🔔 Запланировано",
+                                             "comment":  "Телемост",
+                                             "closed":  false
+                                         },
+                                         {
+                                             "key":  "c1f39334d7d11a98",
+                                             "date":  "24.07.2026",
+                                             "time":  "10:30",
+                                             "client":  "Колмогорцев Владимир",
+                                             "type":  "Встреча / телемост",
+                                             "title":  "Собеседование (менеджер направления Мебель)",
+                                             "status":  "🔔 Запланировано",
+                                             "comment":  "Телемост",
+                                             "closed":  false
+                                         },
+                                         {
+                                             "key":  "4ec19eb0ee32c645",
+                                             "date":  "24.07.2026",
+                                             "time":  "11:00",
+                                             "client":  "Герасимова Светлана",
+                                             "type":  "Встреча / телемост",
+                                             "title":  "Собеседование (менеджер направления Мебель)",
+                                             "status":  "🔔 Запланировано",
+                                             "comment":  "Телемост",
+                                             "closed":  false
+                                         },
+                                         {
+                                             "key":  "001670cef65fa247",
+                                             "date":  "24.07.2026",
+                                             "time":  "12:00",
+                                             "client":  "Свежухина Наталья",
+                                             "type":  "Встреча / телемост",
+                                             "title":  "Собеседование (менеджер направления Мебель)",
+                                             "status":  "🔔 Запланировано",
+                                             "comment":  "Телемост",
+                                             "closed":  false
                                          },
                                          {
                                              "key":  "10eda614e565060c",
