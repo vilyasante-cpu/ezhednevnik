@@ -1,5 +1,5 @@
 {
-    "generated_at":  "2026-07-24T07:17:45.1596242Z",
+    "generated_at":  "2026-07-24T07:47:45.1232453Z",
     "privacy":  "public",
     "notice":  "Names and companies allowed. Phones, emails, amounts removed.",
     "stats":  {
@@ -1229,9 +1229,9 @@
                                              "client":  "Долгова Анастасия",
                                              "type":  "Встреча / телемост",
                                              "title":  "Собеседование (менеджер направления Мебель)",
-                                             "status":  "🔔 Запланировано",
-                                             "comment":  "Телемост",
-                                             "closed":  false
+                                             "status":  "Мимо",
+                                             "comment":  "Не опрятный вид; чисто архитектор, без опыта проектирования мебели",
+                                             "closed":  true
                                          },
                                          {
                                              "key":  "c1f39334d7d11a98",
@@ -1240,9 +1240,9 @@
                                              "client":  "Колмогорцев Владимир",
                                              "type":  "Встреча / телемост",
                                              "title":  "Собеседование (менеджер направления Мебель)",
-                                             "status":  "🔔 Запланировано",
-                                             "comment":  "Телемост",
-                                             "closed":  false
+                                             "status":  "Не состоялось",
+                                             "comment":  "Не вышел на связь",
+                                             "closed":  true
                                          },
                                          {
                                              "key":  "4ec19eb0ee32c645",
