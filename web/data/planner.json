@@ -1,10 +1,10 @@
 {
-    "generated_at":  "2026-07-27T10:47:45.6221507Z",
+    "generated_at":  "2026-07-27T11:17:44.9793029Z",
     "privacy":  "public",
     "notice":  "Names and companies allowed. Phones, emails, amounts removed.",
     "stats":  {
-                  "clients":  25,
-                  "tasks":  98,
+                  "clients":  26,
+                  "tasks":  104,
                   "upcoming_events":  6,
                   "deadlines":  4,
                   "overdue_deadlines":  0
@@ -176,6 +176,63 @@
                                           "priority":  "Низкий",
                                           "status":  "Не начато",
                                           "assignee":  null
+                                      }
+                                  ]
+                    },
+                    {
+                        "name":  "Provance",
+                        "domain":  "3D",
+                        "path":  "3D\\Проекты\\Provance\\BACKLOG.md",
+                        "project_status":  "Переговоры",
+                        "deal_stage":  null,
+                        "contacts":  {
+                                         "Тип":  "Новый клиент (каталог для 3D Plan)",
+                                         "Организация":  "PROVANCE",
+                                         "Отрасль":  "Межкомнатные двери / погонаж / перегородки",
+                                         "Цель":  "Оценить объём и глубину интеграции каталога в 3D-планировщик"
+                                     },
+                        "tasks":  [
+                                      {
+                                          "id":  "PR-01",
+                                          "title":  "Сводный анализ глубины каталога",
+                                          "priority":  "Высокий",
+                                          "status":  "Выполнено",
+                                          "assignee":  "27.07.2026"
+                                      },
+                                      {
+                                          "id":  "PR-02",
+                                          "title":  "Уточнить матрицу совместимости (серия → модель → покрытие → цвет)",
+                                          "priority":  "Высокий",
+                                          "status":  "К выполнению",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "PR-03",
+                                          "title":  "Получить недостающие справочники по топ-опциям (стекло, погонаж, размеры)",
+                                          "priority":  "Высокий",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "PR-04",
+                                          "title":  "Определить MVP-скоуп (какие серии/покрытия в 1-й релиз)",
+                                          "priority":  "Высокий",
+                                          "status":  "Не начато",
+                                          "assignee":  null
+                                      },
+                                      {
+                                          "id":  "PR-05",
+                                          "title":  "Оценить трудозатраты интеграции (н/ч) по MVP и full",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  "После PR-02"
+                                      },
+                                      {
+                                          "id":  "PR-06",
+                                          "title":  "Подготовить КП на интеграцию каталога",
+                                          "priority":  "Средний",
+                                          "status":  "Не начато",
+                                          "assignee":  "После оценки"
                                       }
                                   ]
                     },
