@@ -1,11 +1,11 @@
 {
-    "generated_at":  "2026-07-28T10:17:55.4419854Z",
+    "generated_at":  "2026-07-28T10:47:45.1997479Z",
     "privacy":  "public",
     "notice":  "Names and companies allowed. Phones, emails, amounts removed.",
     "stats":  {
                   "clients":  26,
                   "tasks":  104,
-                  "upcoming_events":  6,
+                  "upcoming_events":  8,
                   "deadlines":  4,
                   "overdue_deadlines":  0
               },
@@ -1242,8 +1242,30 @@
                                              "client":  "Отдел сопровождения",
                                              "type":  "Встреча / телемост",
                                              "title":  "Синхронизация с фабрикой",
+                                             "status":  "Выполнено",
+                                             "comment":  "Закрыто из Ежедневника 28.07.2026",
+                                             "closed":  true
+                                         },
+                                         {
+                                             "key":  "9dd21a20a23046fd",
+                                             "date":  "29.07.2026",
+                                             "time":  "11:00",
+                                             "client":  "Субботин Сергей",
+                                             "type":  "Собеседование / телемост",
+                                             "title":  "Собеседование",
                                              "status":  "🔔 Запланировано",
-                                             "comment":  "Регулярно, каждый вторник",
+                                             "comment":  "",
+                                             "closed":  false
+                                         },
+                                         {
+                                             "key":  "e257bfbe3dc0f2bf",
+                                             "date":  "29.07.2026",
+                                             "time":  "11:30",
+                                             "client":  "Давидюк Алина",
+                                             "type":  "Собеседование / телемост",
+                                             "title":  "Собеседование",
+                                             "status":  "🔔 Запланировано",
+                                             "comment":  "",
                                              "closed":  false
                                          },
                                          {
