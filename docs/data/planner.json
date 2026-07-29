@@ -1,5 +1,5 @@
 {
-    "generated_at":  "2026-07-29T12:17:45.5868742Z",
+    "generated_at":  "2026-07-29T12:47:45.0801169Z",
     "privacy":  "public",
     "notice":  "Names and companies allowed. Phones, emails, amounts removed.",
     "stats":  {
@@ -1253,9 +1253,9 @@
                                              "client":  "Субботин Сергей",
                                              "type":  "Собеседование / телемост",
                                              "title":  "Собеседование",
-                                             "status":  "🔔 Запланировано",
-                                             "comment":  "",
-                                             "closed":  false
+                                             "status":  "Выполнено",
+                                             "comment":  "Закрыто из Ежедневника 29.07.2026",
+                                             "closed":  true
                                          },
                                          {
                                              "key":  "e257bfbe3dc0f2bf",
@@ -1264,9 +1264,9 @@
                                              "client":  "Давидюк Алина",
                                              "type":  "Собеседование / телемост",
                                              "title":  "Собеседование",
-                                             "status":  "🔔 Запланировано",
-                                             "comment":  "",
-                                             "closed":  false
+                                             "status":  "Выполнено",
+                                             "comment":  "Закрыто из Ежедневника 29.07.2026",
+                                             "closed":  true
                                          },
                                          {
                                              "key":  "80eff88ce03684c4",
