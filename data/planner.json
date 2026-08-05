@@ -1,9 +1,9 @@
 {
-    "generated_at":  "2026-08-05T06:17:45.9563159Z",
+    "generated_at":  "2026-08-05T06:47:45.9735904Z",
     "privacy":  "public",
     "notice":  "Names and companies allowed. Phones, emails, amounts removed.",
     "stats":  {
-                  "clients":  26,
+                  "clients":  27,
                   "tasks":  104,
                   "upcoming_events":  8,
                   "deadlines":  4,
@@ -147,6 +147,19 @@
                                           "status":  "Не начато",
                                           "assignee":  null
                                       }
+                                  ]
+                    },
+                    {
+                        "name":  "docs",
+                        "domain":  "PROVANCE",
+                        "path":  "PROVANCE\\Битрикс 24\\docs\\BACKLOG.md",
+                        "project_status":  null,
+                        "deal_stage":  null,
+                        "contacts":  {
+
+                                     },
+                        "tasks":  [
+
                                   ]
                     },
                     {
